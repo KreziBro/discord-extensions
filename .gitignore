@@ -1,0 +1,10 @@
+node_modules/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+extensions/data/plugins/*
+!extensions/data/plugins/.gitkeep
+extensions/data/themes/*
+!extensions/data/themes/.gitkeep
+extensions/data/settings/

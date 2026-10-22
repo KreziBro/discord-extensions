@@ -1,0 +1,2819 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Discord Extensions</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+
+        *::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        body {
+            font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #313338;
+            color: #DBDEE1;
+            font-size: 14px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            height: 38px;
+            background-color: #1e1f22;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            -webkit-app-region: drag;
+            border-bottom: 1px solid #232428;
+            flex-shrink: 0;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-left svg {
+            width: 20px;
+            height: 20px;
+            fill: #5865F2;
+        }
+
+        .title-text {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+        }
+
+        .version-badge {
+            background-color: #5865F2;
+            color: #FFFFFF;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .title-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-app-region: no-drag;
+        }
+
+        .win-btn {
+            width: 28px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: #949BA4;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .win-btn:hover {
+            background-color: #35373C;
+            color: #FFFFFF;
+        }
+
+        .win-btn.close:hover {
+            background-color: #DA373C;
+            color: #FFFFFF;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 236px;
+            background-color: #2b2d31;
+            padding: 16px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-right: 1px solid #232428;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .nav-category {
+            font-size: 11px;
+            font-weight: 700;
+            color: #949BA4;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            letter-spacing: 0.4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 14px;
+            border-radius: 6px;
+            color: #949BA4;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background-color: #35373c;
+            color: #DBDEE1;
+        }
+
+        .nav-item.active {
+            background-color: #404249;
+            color: #FFFFFF;
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer-card {
+            margin-top: 10px;
+            padding: 4px 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Subtle Ko-fi Button */
+        .kofi-btn {
+            background-color: #232428;
+            color: #949BA4;
+            border: 1px solid #35373c;
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .kofi-btn:hover {
+            background-color: #2b2d31;
+            color: #DBDEE1;
+            border-color: #4e5058;
+        }
+
+        .kofi-btn svg {
+            width: 13px;
+            height: 13px;
+            fill: #B5BAC1;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 24px 32px;
+            overflow-y: auto;
+            background-color: #313338;
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #F2F3F5;
+            margin-bottom: 6px;
+        }
+
+        .section-desc {
+            font-size: 13px;
+            color: #949BA4;
+            line-height: 1.4;
+        }
+
+        /* Plugins Search */
+        .plugins-search-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input-wrap input {
+            width: 100%;
+            height: 38px;
+            background-color: #1e1f22;
+            border: 1px solid #3f4147;
+            border-radius: 6px;
+            color: #F2F3F5;
+            font-size: 13px;
+            padding: 0 14px 0 36px;
+            outline: none;
+            transition: border-color 0.15s ease;
+            user-select: text;
+        }
+
+        .search-input-wrap input:focus {
+            border-color: #5865F2;
+        }
+
+        .search-input-wrap svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            fill: #949BA4;
+            pointer-events: none;
+        }
+
+        .tag-pills-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .tag-pill {
+            background-color: #2b2d31;
+            color: #949BA4;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            border: 1px solid #35373C;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .tag-pill:hover {
+            background-color: #35373C;
+            color: #FFFFFF;
+        }
+
+        .tag-pill.active {
+            background-color: #5865F2;
+            color: #FFFFFF;
+            border-color: #5865F2;
+        }
+
+        .plugins-count-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #949BA4;
+            margin-bottom: 12px;
+            padding: 0 2px;
+        }
+
+        .plugin-tag-list {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .plugin-tag-item {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: #1e1f22;
+            color: #80848E;
+        }
+
+        /* Card */
+        .card {
+            background-color: #2b2d31;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #232428;
+            transition: border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: #3f4147;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-width: 80%;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #F2F3F5;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: #949BA4;
+            line-height: 1.4;
+        }
+
+        /* Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #80848E;
+            transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #FFFFFF;
+            transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #5865F2;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: #5865F2;
+            color: #FFFFFF;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #4752C4;
+        }
+
+        .btn.secondary {
+            background-color: #4e5058;
+            color: #FFFFFF;
+        }
+
+        .btn.secondary:hover {
+            background-color: #6d6f78;
+        }
+
+        .btn.danger {
+            background-color: #DA373C;
+            color: #FFFFFF;
+        }
+
+        .btn.danger:hover {
+            background-color: #A12828;
+        }
+
+        /* Form elements */
+        .form-select, .form-input {
+            background-color: #1e1f22;
+            border: 1px solid #3f4147;
+            border-radius: 6px;
+            color: #F2F3F5;
+            font-size: 13px;
+            padding: 8px 12px;
+            outline: none;
+            transition: border-color 0.15s ease;
+            user-select: text;
+        }
+
+        .form-select:focus, .form-input:focus {
+            border-color: #5865F2;
+        }
+
+        /* Mini Screen Dock Preview */
+        .dock-preview-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 12px 0;
+        }
+
+        .dock-preview-screen {
+            width: 220px;
+            height: 136px;
+            background-color: #1e1f22;
+            border: 2px solid #3f4147;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+
+        .dock-preview-titlebar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background-color: #111214;
+            border-bottom: 1px solid #232428;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6px;
+            z-index: 2;
+        }
+
+        .dock-preview-titlebar-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dock-preview-titlebar-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #4e5058;
+        }
+
+        .dock-preview-sidebar {
+            width: 44px;
+            background-color: #232428;
+            height: 100%;
+            padding-top: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            border-right: 1px solid #1e1f22;
+        }
+
+        .dock-preview-server-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #35373c;
+        }
+
+        .dock-preview-server-dot.active {
+            background-color: #5865F2;
+            border-radius: 6px;
+        }
+
+        .dock-preview-chat {
+            flex: 1;
+            padding-top: 24px;
+            padding-left: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .dock-preview-msg-line {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #35373c;
+            width: 70%;
+        }
+
+        .dock-preview-msg-line.short {
+            width: 40%;
+        }
+
+        .dock-target-dot {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: #5865F2;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 10px rgba(88, 101, 242, 0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .dock-target-dot svg {
+            width: 12px;
+            height: 12px;
+            fill: #FFFFFF;
+        }
+
+        .dock-target-dot.pos-bottom-right {
+            bottom: 6px;
+            right: 6px;
+        }
+
+        .dock-target-dot.pos-bottom-left {
+            bottom: 6px;
+            left: 50px;
+        }
+
+        .dock-target-dot.pos-top-right {
+            top: 24px;
+            right: 6px;
+        }
+
+        .dock-target-dot.pos-top-left {
+            top: 24px;
+            left: 50px;
+        }
+
+        .dock-target-dot.pos-custom {
+            top: 50%;
+            left: 60%;
+            transform: translate(-50%, -50%);
+        }
+
+        .dock-target-dot.pos-header-titlebar {
+            top: 2px;
+            left: 50px;
+            width: 48px;
+            height: 15px;
+            border-radius: 3px;
+        }
+
+        /* Themes UI */
+        .theme-resource-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 16px 0;
+        }
+
+        .theme-link-pill {
+            background-color: #2b2d31;
+            border: 1px solid #35373c;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #5865F2;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .theme-link-pill:hover {
+            background-color: #35373c;
+            color: #7983F5;
+            border-color: #5865F2;
+        }
+
+        /* CustomRPC UI */
+        .rpc-builder-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .rpc-form-card {
+            background-color: #2b2d31;
+            border-radius: 8px;
+            padding: 16px 18px;
+            border: 1px solid #232428;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .rpc-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .rpc-field-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #B5BAC1;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .rpc-field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Live Discord Profile RPC Preview */
+        .rpc-preview-box {
+            background-color: #111214;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #232428;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+        }
+
+        .rpc-preview-header {
+            font-size: 11px;
+            font-weight: 800;
+            color: #B5BAC1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rpc-preview-body {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .rpc-preview-assets {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            flex-shrink: 0;
+        }
+
+        .rpc-large-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+            background-color: #2b2d31;
+            object-fit: cover;
+            border: 1px solid #35373c;
+            display: block;
+        }
+
+        .rpc-small-img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #1e1f22;
+            object-fit: cover;
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            border: 2px solid #111214;
+        }
+
+        .rpc-preview-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .rpc-preview-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFFFFF;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rpc-preview-details {
+            font-size: 12px;
+            color: #DBDEE1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rpc-preview-state {
+            font-size: 12px;
+            color: #949BA4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rpc-preview-time {
+            font-size: 11px;
+            color: #949BA4;
+            margin-top: 2px;
+        }
+
+        .rpc-preview-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .rpc-prev-btn {
+            background-color: #2b2d31;
+            color: #FFFFFF;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid #35373c;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rpc-prev-btn:hover {
+            background-color: #35373c;
+        }
+
+        .rpc-slides-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .rpc-slide-pill {
+            background-color: #1e1f22;
+            border: 1px solid #35373c;
+            color: #949BA4;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .rpc-slide-pill.active {
+            background-color: #5865F2;
+            color: #FFFFFF;
+            border-color: #5865F2;
+        }
+
+        /* Textarea for Custom CSS */
+        .css-textarea {
+            width: 100%;
+            height: 140px;
+            background-color: #1e1f22;
+            border: 1px solid #3f4147;
+            border-radius: 6px;
+            color: #F2F3F5;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            padding: 10px;
+            resize: vertical;
+            outline: none;
+            user-select: text;
+        }
+
+        .css-textarea:focus {
+            border-color: #5865F2;
+        }
+
+        /* Restart Notice Bar */
+        .restart-bar {
+            position: fixed;
+            bottom: 48px;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background-color: #232428;
+            border-top: 1px solid #35373C;
+            border-bottom: 1px solid #35373C;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 9999;
+            box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.35);
+            transition: transform 0.25s ease, opacity 0.25s ease;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .restart-bar.hidden {
+            transform: translateY(120%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .restart-bar-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #F2F3F5;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .restart-btn {
+            background-color: #5865F2;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .restart-btn:hover {
+            background-color: #4752C4;
+        }
+
+        /* Footer */
+        .footer {
+            height: 48px;
+            background-color: #1e1f22;
+            border-top: 1px solid #232428;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            flex-shrink: 0;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-toggle {
+            background: #2b2d31;
+            border: 1px solid #3f4147;
+            color: #DBDEE1;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .lang-toggle:hover {
+            background: #35373c;
+            color: #FFF;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="title-left">
+            <svg viewBox="0 0 24 24">
+                <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09-.01-.02-.04-.03-.07-.03-1.5.26-2.93.71-4.27 1.33-.01 0-.02.01-.03.02-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05 1.8 1.32 3.53 2.12 5.24 2.65.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74.02-.04 0-.08-.04-.09-.57-.22-1.11-.48-1.64-.78-.04-.02-.04-.08-.01-.11.11-.08.22-.17.33-.25.02-.02.05-.02.07-.01 3.44 1.57 7.15 1.57 10.55 0 .02-.01.05-.01.07.01.11.09.22.17.33.26.04.03.04.09-.01.11-.52.31-1.07.56-1.64.78-.04.01-.05.06-.04.09.32.61.68 1.19 1.07 1.74.03.01.06.02.09.01 1.72-.53 3.45-1.33 5.25-2.65.02-.01.03-.03.03-.05.44-4.53-.73-8.46-3.1-11.95-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.83 2.12-1.89 2.12z"/>
+            </svg>
+            <span class="title-text" id="ui-title">Discord Extensions</span>
+            <span class="version-badge">v1.0.1</span>
+        </div>
+        <div class="title-controls">
+            <button class="win-btn" id="btn-minimize">_</button>
+            <button class="win-btn close" id="btn-close">&#x2715;</button>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="main-container">
+
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-nav-list">
+                <div class="nav-category" id="nav-cat-label">Управление</div>
+
+                <div class="nav-item active" data-tab="tab-plugins">
+                    <svg viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/></svg>
+                    <span id="nav-plugins">Плагины</span>
+                </div>
+
+                <div class="nav-item" data-tab="tab-user-plugins">
+                    <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                    <span id="nav-user-plugins">Скачанные плагины</span>
+                </div>
+
+                <div class="nav-item" data-tab="tab-quests">
+                    <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+                    <span id="nav-quests">Квесты</span>
+                </div>
+
+                <div class="nav-item" data-tab="tab-themes">
+                    <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.58 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+                    <span id="nav-themes">Темы оформления</span>
+                </div>
+
+                <div class="nav-item" data-tab="tab-custom-rpc">
+                    <svg viewBox="0 0 24 24"><path d="M21.58 16.09l-1.09-7.66C20.21 6.46 18.52 5 16.53 5H7.47C5.48 5 3.79 6.46 3.51 8.43l-1.09 7.66C2.2 17.63 3.39 19 4.94 19c.68 0 1.32-.27 1.8-.75L9 16h6l2.25 2.25c.48.48 1.13.75 1.8.75 1.56 0 2.75-1.37 2.53-2.91zM11 11H9v2H8v-2H6v-1h2V8h1v2h2v1zm4-1c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+                    <span>CustomRPC</span>
+                </div>
+
+                <div class="nav-item" data-tab="tab-settings">
+                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <span id="nav-settings">Настройки</span>
+                </div>
+
+                <div class="nav-item" data-tab="tab-updates">
+                    <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                    <span id="nav-updates">Обновления</span>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer Social Links -->
+            <div class="sidebar-footer-card">
+                <button class="kofi-btn" id="btn-open-telegram" title="Канал разработчика" style="margin-bottom:6px;">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                    <span>Канал разработчика</span>
+                </button>
+                <button class="kofi-btn" id="btn-open-kofi" title="Поддержать автора на Ko fi">
+                    <svg viewBox="0 0 24 24"><path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-1.001-1.379-.197-.069-.42-.09-.653-.09H4.156c-.53 0-1.026.223-1.378.595-.353.372-.518.895-.453 1.433l1.838 11.233c.187 1.144 1.171 1.978 2.33 1.978h8.468c1.159 0 2.143-.834 2.33-1.978l.42-2.568c1.866-.233 3.328-1.748 3.535-3.663.155-1.437-.417-2.853-1.498-3.791.319-.344.498-.797.468-1.164zm-2.096 4.708c-.114 1.054-.997 1.884-2.062 1.936l-.375-3.834c.886.046 1.764.444 2.19 1.139.191.312.288.665.247.759z"/></svg>
+                    <span>Поддержка автора (Ko fi)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+
+            <!-- TAB: PLUGINS -->
+            <div class="tab-panel active" id="tab-plugins">
+                <div class="section-header">
+                    <div class="section-title" id="sec-plugins-title">Плагины</div>
+                    <div class="section-desc" id="sec-plugins-desc">Каталог встроенных модификаций и инструментов для Discord.</div>
+                </div>
+
+                <div class="sub-tabs-bar" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #3f4147; padding-bottom: 8px;">
+                    <button class="sub-tab-btn active" id="subtab-plugins-browser" data-subtab="browser" style="background: #5865F2; color: #FFFFFF; border: none; border-radius: 6px; padding: 7px 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s ease;">
+                        Браузер плагинов (<span id="count-subtab-browser">0</span>)
+                    </button>
+                    <button class="sub-tab-btn" id="subtab-plugins-enabled" data-subtab="enabled" style="background: #2b2d31; color: #949BA4; border: 1px solid #35373C; border-radius: 6px; padding: 7px 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s ease;">
+                        Включенные плагины (<span id="count-subtab-enabled">0</span>)
+                    </button>
+                </div>
+
+                <div class="plugins-search-bar">
+                    <div class="search-input-wrap">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        <input type="text" id="plugin-search-input" placeholder="Поиск по названию или описанию...">
+                    </div>
+
+                    <div class="tag-pills-row" id="plugin-tag-filters">
+                        <button class="tag-pill active" data-tag="all" id="pill-all">Все</button>
+                        <button class="tag-pill" data-tag="Chat" id="pill-chat">Чат</button>
+                        <button class="tag-pill" data-tag="Appearance" id="pill-appearance">Внешний вид</button>
+                        <button class="tag-pill" data-tag="Voice" id="pill-voice">Звук</button>
+                        <button class="tag-pill" data-tag="Privacy" id="pill-privacy">Приватность</button>
+                        <button class="tag-pill" data-tag="Utility" id="pill-utility">Утилиты</button>
+                        <button class="tag-pill" data-tag="Servers" id="pill-servers">Серверы</button>
+                        <button class="tag-pill" data-tag="Emotes" id="pill-emotes">Эмодзи</button>
+                    </div>
+                </div>
+
+                <div class="plugins-count-row">
+                    <span id="plugins-counter">Загрузка списка плагинов...</span>
+                </div>
+
+                <div id="plugins-list-container"></div>
+            </div>
+
+            <!-- TAB: DOWNLOADED / USER PLUGINS -->
+            <div class="tab-panel" id="tab-user-plugins">
+                <div class="section-header">
+                    <div class="section-title">Скачанные плагины</div>
+                    <div class="section-desc">Пользовательские плагины и расширения загруженные в клиент.</div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <button class="btn secondary" id="btn-open-plugins-dir">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                        <span>Открыть папку плагинов</span>
+                    </button>
+                    <button class="btn secondary" id="btn-refresh-user-plugins">
+                        <span>Обновить список</span>
+                    </button>
+                </div>
+
+                <div id="user-plugins-list-container"></div>
+            </div>
+
+            <!-- TAB: QUESTS -->
+            <div class="tab-panel" id="tab-quests">
+                <div class="section-header">
+                    <div class="section-title" id="sec-quests-title">Автоматический сбор квестов</div>
+                    <div class="section-desc" id="sec-quests-desc">Модуль автоматического прохождения заданий Discord Quests с отображением статуса в клиенте.</div>
+                </div>
+
+                <div class="card" id="quests-manager-card" style="flex-direction: column; align-items: stretch; gap: 12px; padding: 18px 20px; background: #1e1f22; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; transition: border-color 0.2s ease;">
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <svg id="quests-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#5865F2; transition:color 0.2s ease;" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polygon points="12 6 12 12 16 14"></polygon>
+                            </svg>
+                            <span style="font-size:12px; font-weight:700; color:#FFFFFF; letter-spacing:0.5px; text-transform:uppercase;">КВЕСТЫ DISCORD</span>
+                        </div>
+                        <span id="quests-status-badge" style="font-size:10px; font-weight:700; background:#5865F2; color:#FFF; padding:3px 8px; border-radius:4px; transition:background 0.2s ease;">ГОТОВ</span>
+                    </div>
+                    <div id="quests-status-title" style="font-size:15px; font-weight:700; color:#F2F3F5; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Автоматические задания</div>
+                    <div id="quests-status-msg" style="font-size:12px; color:#949BA4; line-height:1.4;">Нажмите кнопку для старта сбора</div>
+                    <div style="width:100%; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+                        <div id="quests-progress-bar" style="width:0%; height:100%; background:#5865F2; transition:width 0.3s ease, background 0.3s ease;"></div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:4px;">
+                        <button class="btn" id="btn-start-quests" style="flex:1; padding:8px 14px; font-size:12px; font-weight:700;">
+                            <span id="btn-start-quests-text">Начать сбор</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title" id="title-quests-auto">Автоматический сбор при старте</div>
+                        <div class="card-desc" id="desc-quests-auto">Самостоятельный поиск, принятие заданий, симуляция и получение наград сразу при запуске Discord.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-autoCollectQuests">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title" id="title-quests-widget">Виджет над профилем в клиенте</div>
+                        <div class="card-desc" id="desc-quests-widget">Показывать информационный блок про квесты в левом нижнем углу над панелью профиля.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-showQuestsWidget">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card" style="flex-direction: column; align-items: stretch; gap: 10px;">
+                    <div class="card-info" style="max-width: 100%;">
+                        <div class="card-title" id="title-quests-guide">Автономный цикл выполнения</div>
+                        <div class="card-desc" style="line-height: 1.7;" id="desc-quests-guide">
+                            1. Автоматический поиск заданий в Discord без необходимости заходить в настройки.<br>
+                            2. Автоматическое принятие квестов с выбором версии для компьютера.<br>
+                            3. Фоновая симуляция видео без вызова встроенного видеоплеера.<br>
+                            4. Пропуск экранов мобильных устройств и QR кодов.<br>
+                            5. Автоматический старт симуляции с отображением прогресса в виджете.<br>
+                            6. Автоматическое получение готовой награды сразу по завершению задания.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="flex-direction: column; align-items: stretch; gap: 10px;">
+                    <div class="card-info" style="max-width: 100%;">
+                        <div class="card-title" id="title-quests-console">Резервный скрипт для консоли DevTools</div>
+                        <div class="card-desc" id="desc-quests-console">Если требуется запустить скрипт вручную через F12. При блокировке вставки сначала напишите в консоль: allow pasting</div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn secondary" id="btn-copy-quests-script">
+                            <span id="btn-copy-script-text">Скопировать скрипт</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: THEMES (BETTERDISCORD / VENCORD .THEME.CSS & CUSTOM CSS) -->
+            <div class="tab-panel" id="tab-themes">
+                <div class="section-header">
+                    <div class="section-title" id="sec-themes-title">Темы оформления</div>
+                    <div class="section-desc" id="sec-themes-desc">Установка любых сторонних тем оформления .theme.css и каталоги стилей.</div>
+                </div>
+
+                <div class="card" style="flex-direction: column; align-items: stretch; gap: 12px; padding: 16px 18px;">
+                    <div class="card-desc">Каталоги готовых тем оформления:</div>
+                    <div class="theme-resource-links">
+                        <a class="theme-link-pill" data-url="https://betterdiscord.app/themes">BetterDiscord Themes</a>
+                        <a class="theme-link-pill" data-url="https://github.com/catppuccin/discord">Catppuccin Discord</a>
+                        <a class="theme-link-pill" data-url="https://discordthemes.net/">DiscordThemes</a>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" class="form-input" id="theme-download-url" placeholder="Вставьте прямую ссылку или ссылку GitHub на .theme.css..." style="flex:1;">
+                        <button class="btn" id="btn-download-theme">Загрузить тему</button>
+                    </div>
+                </div>
+
+                <!-- Native Discord Gradient Themes -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin: 18px 0 10px 0;">
+                    <span style="font-size:14px; font-weight:700; color:#FFFFFF;">Градиентные темы Discord</span>
+                </div>
+                <div id="native-themes-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; margin-bottom: 20px;"></div>
+
+                <!-- Installed Custom Themes -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin: 18px 0 10px 0;">
+                    <span style="font-size:14px; font-weight:700; color:#FFFFFF;">Установленные темы</span>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn secondary" id="btn-refresh-themes" style="font-size:12px; padding:6px 12px;">Обновить список</button>
+                        <button class="btn secondary" id="btn-open-themes-dir" style="font-size:12px; padding:6px 12px;">Открыть папку тем</button>
+                    </div>
+                </div>
+                <div id="custom-themes-list"></div>
+
+                <!-- Custom CSS -->
+                <div class="card" style="flex-direction: column; align-items: stretch; gap: 10px; margin-top: 18px;">
+                    <div class="card-info" style="max-width: 100%;">
+                        <div class="card-title" id="title-custom-css">Собственный Custom CSS</div>
+                        <div class="card-desc" id="desc-custom-css">Введите любые CSS правила, они будут применены к интерфейсу клиента.</div>
+                    </div>
+                    <textarea class="css-textarea" id="custom-css-input" placeholder="/* Ваши стили CSS */"></textarea>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn" id="btn-save-css">
+                            <span id="btn-save-css-text">Сохранить стиль</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CUSTOM RPC -->
+            <div class="tab-panel" id="tab-custom-rpc">
+                <div class="section-header">
+                    <div class="section-title">Модуль CustomRPC</div>
+                    <div class="section-desc">Настройка персонального богатого статуса активности в Discord с ротацией слайдов без сторонних программ.</div>
+                </div>
+
+                <div class="card" style="margin-bottom:16px;">
+                    <div class="card-info">
+                        <div class="card-title">Включить статус активности CustomRPC</div>
+                        <div class="card-desc">Отображать локальный статус в вашем профиле Discord в реальном времени.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="rpc-enabled">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card" style="align-items:center; margin-bottom:16px; padding:12px 18px;">
+                    <div class="card-info">
+                        <div class="card-title">Интервал ротации слайдов (секунды)</div>
+                        <div class="card-desc">Время автоматического переключения между карточками активности.</div>
+                    </div>
+                    <input type="number" id="rpc-rotation-interval" class="form-input" min="3" max="300" value="12" style="width:90px; text-align:center;">
+                </div>
+
+                <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; align-items:center;">
+                    <span style="font-size:12px; color:#949BA4; font-weight:600;">Готовые шаблоны:</span>
+                    <button class="btn secondary" style="font-size:11px; padding:5px 10px;" id="preset-vscode">VS Code</button>
+                    <button class="btn secondary" style="font-size:11px; padding:5px 10px;" id="preset-cyberpunk">Cyberpunk 2077</button>
+                    <button class="btn secondary" style="font-size:11px; padding:5px 10px;" id="preset-music">Музыка</button>
+                    <button class="btn secondary" style="font-size:11px; padding:5px 10px;" id="preset-kofi">Поддержка Ko fi</button>
+                </div>
+
+                <div class="rpc-builder-grid">
+                    <div class="rpc-form-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="rpc-slides-tabs" id="rpc-slides-tabs-container"></div>
+                            <div style="display:flex; gap:6px;">
+                                <button class="btn secondary" id="btn-add-slide" style="padding:4px 8px; font-size:11px;">+ Слайд</button>
+                                <button class="btn danger" id="btn-del-slide" style="padding:4px 8px; font-size:11px;">Удалить</button>
+                            </div>
+                        </div>
+
+                        <div class="rpc-field-row">
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Название приложения / игры</label>
+                                <input type="text" class="form-input" id="rpc-name" placeholder="Visual Studio Code">
+                            </div>
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Тип активности</label>
+                                <select class="form-select" id="rpc-type">
+                                    <option value="0">Играет</option>
+                                    <option value="1">Стримит</option>
+                                    <option value="2">Слушает</option>
+                                    <option value="3">Смотрит</option>
+                                    <option value="5">Соревнуется</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="rpc-field-group">
+                            <label class="rpc-field-label">Строка 1 (Подробности)</label>
+                            <input type="text" class="form-input" id="rpc-details" placeholder="Редактирует extensionsManager.html">
+                        </div>
+
+                        <div class="rpc-field-group">
+                            <label class="rpc-field-label">Строка 2 (Состояние)</label>
+                            <input type="text" class="form-input" id="rpc-state" placeholder="Рабочая область: discord extensions">
+                        </div>
+
+                        <div class="rpc-field-row">
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Большая иконка (URL картинки)</label>
+                                <input type="text" class="form-input" id="rpc-large-img" placeholder="https://...">
+                            </div>
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Подсказка большой иконки</label>
+                                <input type="text" class="form-input" id="rpc-large-text" placeholder="Visual Studio Code">
+                            </div>
+                        </div>
+
+                        <div class="rpc-field-row">
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Малая иконка (URL картинки)</label>
+                                <input type="text" class="form-input" id="rpc-small-img" placeholder="https://...">
+                            </div>
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Подсказка малой иконки</label>
+                                <input type="text" class="form-input" id="rpc-small-text" placeholder="Программирование">
+                            </div>
+                        </div>
+
+                        <div class="rpc-field-row">
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Кнопка 1 (Текст)</label>
+                                <input type="text" class="form-input" id="rpc-btn1-text" placeholder="Поддержать на Ko fi">
+                            </div>
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Кнопка 1 (Ссылка URL)</label>
+                                <input type="text" class="form-input" id="rpc-btn1-url" placeholder="https://ko-fi.com/krejzibro">
+                            </div>
+                        </div>
+
+                        <div class="rpc-field-row">
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Кнопка 2 (Текст)</label>
+                                <input type="text" class="form-input" id="rpc-btn2-text" placeholder="Репозиторий">
+                            </div>
+                            <div class="rpc-field-group">
+                                <label class="rpc-field-label">Кнопка 2 (Ссылка URL)</label>
+                                <input type="text" class="form-input" id="rpc-btn2-url" placeholder="https://github.com/...">
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+                            <button class="btn" id="btn-save-rpc">Сохранить CustomRPC</button>
+                        </div>
+                    </div>
+
+                    <!-- Live Profile Activity Preview -->
+                    <div>
+                        <div style="font-size:12px; font-weight:700; color:#949BA4; text-transform:uppercase; margin-bottom:8px;">Предосмотр в профиле:</div>
+                        <div class="rpc-preview-box">
+                            <div class="rpc-preview-header" id="rpc-prev-type">ИГРАЕТ В ИГРУ</div>
+                            <div class="rpc-preview-body">
+                                <div class="rpc-preview-assets">
+                                    <img id="rpc-prev-large-img" class="rpc-large-img" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png" alt="Large">
+                                    <img id="rpc-prev-small-img" class="rpc-small-img" src="https://assets.stickpng.com/images/5848309bcef1014c0b5e4a9a.png" alt="Small">
+                                </div>
+                                <div class="rpc-preview-info">
+                                    <div class="rpc-preview-name" id="rpc-prev-name">Visual Studio Code</div>
+                                    <div class="rpc-preview-details" id="rpc-prev-details">Редактирует extensionsManager.html</div>
+                                    <div class="rpc-preview-state" id="rpc-prev-state">Рабочая область: discord extensions</div>
+                                    <div class="rpc-preview-time" id="rpc-prev-time">00:42:19 прошло</div>
+                                </div>
+                            </div>
+                            <div class="rpc-preview-buttons">
+                                <div class="rpc-prev-btn" id="rpc-prev-btn1">Поддержать на Ko fi</div>
+                                <div class="rpc-prev-btn" id="rpc-prev-btn2">Репозиторий проекта</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: SETTINGS (UNIFIED CLIENT SETTINGS) -->
+            <div class="tab-panel" id="tab-settings">
+                <div class="section-header">
+                    <div class="section-title">Настройки клиента</div>
+                    <div class="section-desc">Параметры кнопки быстрого доступа, аппаратное ускорение и внешние расширения.</div>
+                </div>
+
+                <!-- Section 1: Dock Button with Corner, Custom & Header Options -->
+                <div class="card" style="flex-direction: column; align-items: stretch; gap: 14px; margin-bottom:14px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <div class="card-info">
+                            <div class="card-title">Кнопка в окне Discord</div>
+                            <div class="card-desc">Кнопка быстрого вызова панели Discord Extensions прямо внутри клиента.</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="cfg-showDockButton">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px solid #232428;">
+                        <span style="font-size:13px; font-weight:600; color:#F2F3F5;">Положение кнопки:</span>
+                        <select class="form-select" id="dock-position-select" style="width:230px;">
+                            <option value="bottom-right">Внизу справа</option>
+                            <option value="bottom-left">Внизу слева</option>
+                            <option value="top-right">Вверху справа</option>
+                            <option value="top-left">Вверху слева</option>
+                            <option value="custom">Кастомное (перетаскивание)</option>
+                            <option value="header-titlebar">Заголовок</option>
+                        </select>
+                    </div>
+
+                    <div class="dock-preview-container">
+                        <div class="dock-preview-screen">
+                            <div class="dock-preview-titlebar">
+                                <div class="dock-preview-titlebar-left">
+                                    <div class="dock-preview-titlebar-dot"></div>
+                                    <div class="dock-preview-titlebar-dot"></div>
+                                </div>
+                                <div style="display:flex; gap:3px;">
+                                    <div class="dock-preview-titlebar-dot"></div>
+                                </div>
+                            </div>
+                            <div class="dock-preview-sidebar">
+                                <div class="dock-preview-server-dot active"></div>
+                                <div class="dock-preview-server-dot"></div>
+                                <div class="dock-preview-server-dot"></div>
+                            </div>
+                            <div class="dock-preview-chat">
+                                <div class="dock-preview-msg-line"></div>
+                                <div class="dock-preview-msg-line short"></div>
+                                <div class="dock-preview-msg-line"></div>
+                            </div>
+                            <div id="dock-preview-dot" class="dock-target-dot pos-bottom-right">
+                                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
+                            </div>
+                        </div>
+                        <div style="font-size:12px; color:#949BA4; line-height:1.6;" id="dock-preview-help-text">
+                            Кнопка располагается в выбранном углу окна.<br>
+                            В режиме <strong>Кастомное</strong> кнопку можно свободно перетаскивать мышью.<br>
+                            В режиме <strong>Заголовок</strong> отображается компактная продолговатая плашка в верхней панели.<br>
+                            Также всегда доступно открытие горячими клавишами <strong>Ctrl + Shift + E</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Extra Optimization & Performance -->
+                <div class="card" style="border: 1px solid rgba(240, 178, 50, 0.35); background: rgba(240, 178, 50, 0.04);">
+                    <div class="card-info">
+                        <div class="card-title" style="color: #F0B232; display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.05.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.04-4.09l-2.45-1.44C16.27 17.81 14.28 19 12 19z"/></svg>
+                            Экстра оптимизация (Игровой режим памяти)
+                        </div>
+                        <div class="card-desc">
+                            Режим экстремального снижения оперативной памяти для слабых систем и требовательных игр. Принудительно очищает оперативную память Chromium, отключает тяжелые фоновые визуальные эффекты, анимации и рендеринг предпросмотра своего экрана. Голосовой чат и демонстрация экрана для друзей продолжают работать стабильно на полной скорости. Не рекомендуется держать включенным на постоянной основе на производительных компьютерах.
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-extraOptimization">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Аппаратное ускорение GPU</div>
+                        <div class="card-desc">Использование видеокарты для плавной анимации интерфейса без нагрузки на процессор.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-hardwareAcceleration">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Блокировка аналитики и трекеров</div>
+                        <div class="card-desc">Отключение отправки метрик sentry и datadoghq для уменьшения задержек сети.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-blockTelemetry">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Section 3: Chrome Extensions -->
+                <div class="card" style="flex-direction: column; align-items: stretch; gap: 12px; margin-top: 14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="card-info">
+                            <div class="card-title">Расширения Chrome</div>
+                            <div class="card-desc">Подключение любых сторонних распакованных расширений Chrome в клиент Discord.</div>
+                        </div>
+                        <button class="btn secondary" id="btn-open-dir" style="font-size:12px; padding:6px 12px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                            <span>Папка расширений</span>
+                        </button>
+                    </div>
+                    <div id="chrome-extensions-list">
+                        <div style="font-size:12px; color:#949BA4; padding: 4px 0;">Поместите распакованную папку расширения в каталог extensions/chrome.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: UPDATES -->
+            <div class="tab-panel" id="tab-updates">
+                <div class="section-header">
+                    <div class="section-title" id="sec-updates-title">Центр обновлений</div>
+                    <div class="section-desc" id="sec-updates-desc">Проверка актуальной версии и автоматическая синхронизация с репозиторием.</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title" id="title-current-ver">Текущая версия</div>
+                        <div class="card-desc">Discord Extensions v1.0.1</div>
+                    </div>
+                    <button class="btn" id="btn-check-update">
+                        <span id="btn-check-update-text">Проверить обновления</span>
+                    </button>
+                </div>
+
+                <div id="update-banner" class="update-box" style="display: none; background-color:#2b2d31; border:1px solid #5865F2; border-radius:8px; padding:16px 20px; margin-bottom:16px; align-items:center; justify-content:space-between;">
+                    <div>
+                        <h4 id="banner-update-title" style="font-size:15px; color:#FFFFFF; margin-bottom:4px;">Доступна новая версия!</h4>
+                        <p id="banner-update-desc" style="font-size:12px; color:#949BA4;">Нажмите кнопку для автоматической установки свежей сборки.</p>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn" id="btn-apply-update">Обновить сейчас</button>
+                        <button class="btn secondary" id="btn-update-restart" style="display: none;">Перезапустить</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Restart Notice Bar -->
+    <div id="restart-bar" class="restart-bar hidden">
+        <div class="restart-bar-content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#5865F2">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <span id="restart-bar-msg">Для применения нужно перезагрузить Discord</span>
+        </div>
+        <button id="btn-restart-discord" class="restart-btn">Перезагрузить</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-left">
+            <button class="lang-toggle" id="btn-lang-toggle">RU</button>
+            <span style="font-size: 11px; color: #80848E;" id="lbl-hotkey">Горячие клавиши: Ctrl + Shift + E</span>
+        </div>
+        <button class="btn secondary" id="btn-relaunch">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+            <span id="btn-relaunch-text">Перезапустить Discord</span>
+        </button>
+    </div>
+
+    <script>
+        const I18N = {
+            ru: {
+                navCategory: "Управление",
+                navPlugins: "Плагины",
+                navUserPlugins: "Скачанные плагины",
+                navQuests: "Квесты",
+                navThemes: "Темы оформления",
+                navSettings: "Настройки",
+                navUpdates: "Обновления",
+
+                secPluginsTitle: "Плагины",
+                secPluginsDesc: "Каталог встроенных модификаций и инструментов для Discord.",
+                searchPlaceholder: "Поиск по названию или описанию...",
+                pillAll: "Все",
+                pillChat: "Чат",
+                pillAppearance: "Внешний вид",
+                pillVoice: "Звук",
+                pillPrivacy: "Приватность",
+                pillUtility: "Утилиты",
+                pillServers: "Серверы",
+                pillEmotes: "Эмодзи",
+                enabledCountLabel: "Включено {count} из {total}",
+                noPluginsFound: "Ничего не найдено по вашему запросу",
+
+                secQuestsTitle: "Автоматический сбор квестов",
+                secQuestsDesc: "Модуль автоматического прохождения заданий Discord Quests с отображением статуса в клиенте.",
+                titleQuestsRunner: "Сбор активных заданий",
+                descQuestsRunner: "Запуск фоновой симуляции игры, видео или трансляции для завершения всех доступных квестов.",
+                btnStartQuests: "Начать сбор квестов",
+                btnStopQuests: "Остановить",
+                questsStatusBadge: "СТАТУС МОДУЛЯ",
+                questsStatusReady: "Готов к запуску",
+                questsStatusMsgDefault: "Нажмите кнопку выше для старта проверки и сбора заданий",
+                titleQuestsAuto: "Автоматический сбор при старте",
+                descQuestsAuto: "Самостоятельный поиск, принятие заданий, симуляция и получение наград сразу при запуске Discord.",
+                titleQuestsWidget: "Виджет над профилем в клиенте",
+                descQuestsWidget: "Показывать информационный блок про квесты в левом нижнем углу над панелью профиля.",
+                titleQuestsGuide: "Автономный цикл выполнения",
+                descQuestsGuide: "1. Автоматический поиск заданий в Discord без необходимости заходить в настройки.<br>2. Автоматическое принятие квестов с выбором версии для компьютера.<br>3. Фоновая симуляция видео без вызова встроенного видеоплеера.<br>4. Пропуск экранов мобильных устройств и QR кодов.<br>5. Автоматический старт симуляции с отображением прогресса в виджете.<br>6. Автоматическое получение готовой награды сразу по завершению задания.",
+                titleQuestsConsole: "Резервный скрипт для консоли DevTools",
+                descQuestsConsole: "Если требуется запустить скрипт вручную через F12. При блокировке вставки сначала напишите в консоль: allow pasting",
+                btnCopyScript: "Скопировать скрипт",
+                scriptCopied: "Скрипт скопирован в буфер обмена!",
+
+                secThemesTitle: "Темы оформления",
+                secThemesDesc: "Установка любых сторонних тем оформления .theme.css и каталоги стилей.",
+                titleCustomCss: "Собственный Custom CSS",
+                descCustomCss: "Введите любые CSS правила, они будут применены к интерфейсу клиента.",
+                btnSaveCssText: "Сохранить стиль",
+
+                secUpdatesTitle: "Центр обновлений",
+                secUpdatesDesc: "Проверка актуальной версии и автоматическая синхронизация с репозиторием.",
+                titleCurrentVer: "Текущая версия",
+                btnCheckUpdates: "Проверить обновления",
+                btnChecking: "Проверка...",
+                btnRelaunch: "Перезапустить Discord",
+                lblHotkey: "Горячие клавиши: Ctrl + Shift + E",
+                updateFound: "Доступна версия ",
+                updateNotFound: "У вас установлена самая свежая версия",
+                updatedNoRestart: "Обновлено успешно без перезапуска!",
+                updatedNeedRestart: "Обновлено! Требуется перезапуск для применения.",
+                restartMsg: "Для применения нужно перезагрузить Discord",
+                restartBtn: "Перезагрузить"
+            },
+            en: {
+                navCategory: "Management",
+                navPlugins: "Plugins",
+                navUserPlugins: "Downloaded Plugins",
+                navQuests: "Quests",
+                navThemes: "Themes",
+                navSettings: "Settings",
+                navUpdates: "Updates",
+
+                secPluginsTitle: "Plugins",
+                secPluginsDesc: "Browse and toggle enhancements and mods for Discord.",
+                searchPlaceholder: "Search plugins by name or description...",
+                pillAll: "All",
+                pillChat: "Chat",
+                pillAppearance: "Appearance",
+                pillVoice: "Voice",
+                pillPrivacy: "Privacy",
+                pillUtility: "Utility",
+                pillServers: "Servers",
+                pillEmotes: "Emotes",
+                enabledCountLabel: "Enabled {count} of {total}",
+                noPluginsFound: "No plugins found matching your query",
+
+                secQuestsTitle: "Automated Quest Completer",
+                secQuestsDesc: "Automatic completion of Discord Quests with live status inside the client.",
+                titleQuestsRunner: "Collect Active Quests",
+                descQuestsRunner: "Launch background game, video, or stream spoofing to complete all available quests.",
+                btnStartQuests: "Start Quest Completer",
+                btnStopQuests: "Stop",
+                questsStatusBadge: "MODULE STATUS",
+                questsStatusReady: "Ready to launch",
+                questsStatusMsgDefault: "Click the button above to start collecting quests",
+                titleQuestsAuto: "Auto Collect on Startup",
+                descQuestsAuto: "Automatically discover, accept, simulate, and claim quest rewards on launch.",
+                titleQuestsWidget: "Widget Above Profile",
+                descQuestsWidget: "Display quest information card in the bottom left above user profile.",
+                titleQuestsGuide: "Step by Step Guide",
+                descQuestsGuide: "1. Automatic discovery of quests without opening settings.<br>2. Automatic acceptance with desktop preference.<br>3. Background video spoofing without opening internal player.<br>4. Skip mobile screens and QR codes.<br>5. Live simulation progress in status widget.<br>6. Automatic reward claim on completion.",
+                titleQuestsConsole: "Console Script Backup",
+                descQuestsConsole: "Run manually via F12 console. If pasting is blocked, type into console first: allow pasting",
+                btnCopyScript: "Copy Script",
+                scriptCopied: "Script copied to clipboard!",
+
+                secThemesTitle: "Appearance Themes",
+                secThemesDesc: "Install any custom .theme.css themes and browse community catalogs.",
+                titleCustomCss: "Custom CSS Editor",
+                descCustomCss: "Enter custom CSS rules to apply them directly into the Discord client.",
+                btnSaveCssText: "Save CSS",
+
+                secUpdatesTitle: "Update Center",
+                secUpdatesDesc: "Check for latest releases and synchronize directly with repository.",
+                titleCurrentVer: "Current Version",
+                btnCheckUpdates: "Check for Updates",
+                btnChecking: "Checking...",
+                btnRelaunch: "Restart Discord",
+                lblHotkey: "Shortcuts: Ctrl + Shift + E",
+                updateFound: "New version available: ",
+                updateNotFound: "You have the latest version installed",
+                updatedNoRestart: "Updated successfully without restarting!",
+                updatedNeedRestart: "Updated! Restart required to apply changes.",
+                restartMsg: "Restart Discord to apply changes",
+                restartBtn: "Restart"
+            }
+        };
+
+        let currentLang = 'ru';
+        let allPluginsList = [];
+        let activeTagFilter = 'all';
+
+        function setText(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        }
+
+        function setHtml(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = val;
+        }
+
+        function setPlaceholder(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.placeholder = val;
+        }
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            const t = I18N[lang];
+
+            setText('nav-cat-label', t.navCategory);
+            setText('nav-plugins', t.navPlugins);
+            setText('nav-user-plugins', t.navUserPlugins);
+            setText('nav-quests', t.navQuests);
+            setText('nav-themes', t.navThemes);
+            setText('nav-settings', t.navSettings);
+            setText('nav-updates', t.navUpdates);
+
+            setText('sec-plugins-title', t.secPluginsTitle);
+            setText('sec-plugins-desc', t.secPluginsDesc);
+            setPlaceholder('plugin-search-input', t.searchPlaceholder);
+            setText('pill-all', t.pillAll);
+            setText('pill-chat', t.pillChat);
+            setText('pill-appearance', t.pillAppearance);
+            setText('pill-voice', t.pillVoice);
+            setText('pill-privacy', t.pillPrivacy);
+            setText('pill-utility', t.pillUtility);
+            setText('pill-servers', t.pillServers);
+            setText('pill-emotes', t.pillEmotes);
+
+            setText('sec-quests-title', t.secQuestsTitle);
+            setText('sec-quests-desc', t.secQuestsDesc);
+            setText('title-quests-runner', t.titleQuestsRunner);
+            setText('desc-quests-runner', t.descQuestsRunner);
+            setText('quests-status-badge', t.questsStatusBadge);
+            setText('title-quests-auto', t.titleQuestsAuto);
+            setText('desc-quests-auto', t.descQuestsAuto);
+            setText('title-quests-widget', t.titleQuestsWidget);
+            setText('desc-quests-widget', t.descQuestsWidget);
+            setText('title-quests-guide', t.titleQuestsGuide);
+            setHtml('desc-quests-guide', t.descQuestsGuide);
+            setText('title-quests-console', t.titleQuestsConsole);
+            setText('desc-quests-console', t.descQuestsConsole);
+            setText('btn-copy-script-text', t.btnCopyScript);
+
+            setText('sec-themes-title', t.secThemesTitle);
+            setText('sec-themes-desc', t.secThemesDesc);
+            setText('title-custom-css', t.titleCustomCss);
+            setText('desc-custom-css', t.descCustomCss);
+            setText('btn-save-css-text', t.btnSaveCssText);
+
+            setText('sec-updates-title', t.secUpdatesTitle);
+            setText('sec-updates-desc', t.secUpdatesDesc);
+            setText('title-current-ver', t.titleCurrentVer);
+            setText('btn-check-update-text', t.btnCheckUpdates);
+            setText('btn-relaunch-text', t.btnRelaunch);
+            setText('lbl-hotkey', t.lblHotkey);
+            setText('btn-lang-toggle', lang.toUpperCase());
+
+            setText('restart-bar-msg', t.restartMsg);
+            setText('btn-restart-discord', t.restartBtn);
+
+            updatePluginsCounter();
+        }
+
+        // Navigation Tabs
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                item.classList.add('active');
+                const targetId = item.getAttribute('data-tab');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) targetEl.classList.add('active');
+            });
+        });
+
+        // Window Controls
+        document.getElementById('btn-minimize').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.minimizeWindow();
+        });
+        document.getElementById('btn-close').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.closeWindow();
+        });
+
+        // Language Toggle
+        document.getElementById('btn-lang-toggle').addEventListener('click', () => {
+            applyLanguage(currentLang === 'ru' ? 'en' : 'ru');
+        });
+
+        // Relaunch Discord
+        document.getElementById('btn-relaunch').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.relaunchDiscord();
+        });
+
+        // Open Extensions Directory
+        document.getElementById('btn-open-dir').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.openExtensionsDir();
+        });
+
+        // Telegram Developer Channel Button
+        document.getElementById('btn-open-telegram').addEventListener('click', () => {
+            if (window.discordExtensions && window.discordExtensions.openExternal) {
+                window.discordExtensions.openExternal('https://t.me/KreziBro_dev');
+            }
+        });
+
+        // Ko-fi Button
+        document.getElementById('btn-open-kofi').addEventListener('click', () => {
+            if (window.discordExtensions && window.discordExtensions.openExternal) {
+                window.discordExtensions.openExternal('https://ko-fi.com/krejzibro');
+            }
+        });
+
+        // External Link Pills
+        document.querySelectorAll('.theme-link-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const url = pill.getAttribute('data-url');
+                if (url && window.discordExtensions && window.discordExtensions.openExternal) {
+                    window.discordExtensions.openExternal(url);
+                }
+            });
+        });
+
+        // ==========================================
+        // DOCK POSITION SELECTOR & VISUAL PREVIEW
+        // ==========================================
+        const dockPosSelect = document.getElementById('dock-position-select');
+        const dockPreviewDot = document.getElementById('dock-preview-dot');
+
+        function updateDockPreview(position) {
+            if (!dockPreviewDot) return;
+            dockPreviewDot.className = 'dock-target-dot pos-' + position;
+        }
+
+        if (dockPosSelect) {
+            dockPosSelect.addEventListener('change', () => {
+                const pos = dockPosSelect.value;
+                updateDockPreview(pos);
+                if (window.discordExtensions) {
+                    window.discordExtensions.saveConfig({ dockPosition: pos });
+                }
+            });
+        }
+
+        // ==========================================
+        // THEMES MODULE (CUSTOM .THEME.CSS & CSS)
+        // ==========================================
+        async function loadThemesUI() {
+            if (!window.discordExtensions || !window.discordExtensions.getThemesData) return;
+            try {
+                const data = await window.discordExtensions.getThemesData();
+                renderNativeThemes(data.nativeThemes || [], data.activeNativeTheme || 'none');
+                renderCustomThemes(data.customThemes || [], data.enabledCustomThemes || []);
+
+                // Dynamically sync Quests preview card with active theme
+                const currentTheme = (data.nativeThemes || []).find(t => t.id === data.activeNativeTheme);
+                const questsCard = document.getElementById('quests-manager-card');
+                const questsBar = document.getElementById('quests-progress-bar');
+                const questsBadge = document.getElementById('quests-status-badge');
+                const questsBtn = document.getElementById('btn-start-quests');
+                const questsIcon = document.getElementById('quests-icon-svg');
+
+                if (currentTheme && currentTheme.id !== 'none' && currentTheme.colors && currentTheme.colors.length > 0) {
+                    const c1 = currentTheme.colors[0];
+                    const c2 = currentTheme.colors[currentTheme.colors.length - 1];
+                    if (questsCard) questsCard.style.borderColor = c1;
+                    if (questsBar) questsBar.style.background = 'linear-gradient(90deg, ' + c1 + ', ' + c2 + ')';
+                    if (questsBadge) questsBadge.style.background = c1;
+                    if (questsBtn) questsBtn.style.background = 'linear-gradient(135deg, ' + c1 + ', ' + c2 + ')';
+                    if (questsIcon) questsIcon.style.color = c1;
+                } else {
+                    if (questsCard) questsCard.style.borderColor = 'rgba(255,255,255,0.08)';
+                    if (questsBar) questsBar.style.background = '#5865F2';
+                    if (questsBadge) questsBadge.style.background = '#5865F2';
+                    if (questsBtn) questsBtn.style.background = '#5865F2';
+                    if (questsIcon) questsIcon.style.color = '#5865F2';
+                }
+            } catch (e) {
+                console.error('Failed to load themes data:', e);
+            }
+        }
+
+        function renderNativeThemes(nativeThemes, activeNativeTheme) {
+            const container = document.getElementById('native-themes-grid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for (const theme of nativeThemes) {
+                const isSelected = (theme.id === activeNativeTheme);
+                const card = document.createElement('div');
+                card.style.cssText = 'background: ' + (isSelected ? '#232738' : '#2b2d31') + '; border: 2px solid ' + (isSelected ? '#5865F2' : '#35373c') + '; border-radius: 8px; padding: 10px; cursor: pointer; transition: all 0.15s ease; display: flex; flex-direction: column; gap: 8px; box-shadow: ' + (isSelected ? '0 0 10px rgba(88,101,242,0.25)' : 'none') + ';';
+                card.onmouseenter = () => { if (!isSelected) card.style.borderColor = '#4e5058'; };
+                card.onmouseleave = () => { if (!isSelected) card.style.borderColor = '#35373c'; };
+
+                const angle = theme.angle || 135;
+                const colorsList = Array.isArray(theme.colors) && theme.colors.length > 0 ? theme.colors : ['#313338', '#1e1f22'];
+                const gradCss = 'linear-gradient(' + angle + 'deg, ' + colorsList.join(', ') + ')';
+
+                const preview = document.createElement('div');
+                preview.style.cssText = 'height: 44px; border-radius: 6px; background: ' + gradCss + '; box-shadow: 0 2px 4px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06);';
+
+                const titleRow = document.createElement('div');
+                titleRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-top: 2px;';
+
+                const title = document.createElement('span');
+                title.style.cssText = 'font-size: 11px; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: ' + (isSelected ? '65%' : '100%') + ';';
+                title.textContent = theme.name;
+                titleRow.appendChild(title);
+
+                if (isSelected) {
+                    const statusBadge = document.createElement('span');
+                    statusBadge.style.cssText = 'font-size: 10px; font-weight: 700; color: #5865F2; white-space: nowrap; background: rgba(88, 101, 242, 0.15); padding: 2px 5px; border-radius: 4px; border: 1px solid rgba(88, 101, 242, 0.3);';
+                    statusBadge.textContent = '✓ Выбрано';
+                    titleRow.appendChild(statusBadge);
+                }
+
+                card.appendChild(preview);
+                card.appendChild(titleRow);
+
+                card.addEventListener('click', async () => {
+                    renderNativeThemes(nativeThemes, theme.id);
+                    if (window.discordExtensions && window.discordExtensions.setNativeTheme) {
+                        await window.discordExtensions.setNativeTheme(theme.id);
+                        await loadThemesUI();
+                    }
+                });
+
+                container.appendChild(card);
+            }
+        }
+
+        function renderCustomThemes(customThemes, enabledList) {
+            const container = document.getElementById('custom-themes-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (customThemes.length === 0) {
+                const emptyCard = document.createElement('div');
+                emptyCard.className = 'card';
+                emptyCard.innerHTML = `
+                    <div class="card-info">
+                        <div class="card-title">Нет установленных тем</div>
+                        <div class="card-desc">Введите ссылку выше или скопируйте файлы .theme.css в папку с темами.</div>
+                    </div>
+                `;
+                container.appendChild(emptyCard);
+                return;
+            }
+
+            for (const theme of customThemes) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                const isEnabled = enabledList.includes(theme.id) || enabledList.includes(theme.fileName);
+                card.innerHTML = `
+                    <div class="card-info" style="max-width:70%;">
+                        <div class="card-title">${theme.name} <span style="font-size:11px; color:#80848E;">v${theme.version}</span></div>
+                        <div class="card-desc">${theme.description || theme.fileName}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <button class="btn danger" style="padding:4px 8px; font-size:11px;" data-del="${theme.fileName}">Удалить</button>
+                        <label class="switch">
+                            <input type="checkbox" ${isEnabled ? 'checked' : ''} data-theme-id="${theme.fileName}">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                `;
+
+                const checkbox = card.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', async () => {
+                    if (window.discordExtensions && window.discordExtensions.toggleCustomTheme) {
+                        await window.discordExtensions.toggleCustomTheme(theme.fileName, checkbox.checked);
+                    }
+                });
+
+                const delBtn = card.querySelector('button[data-del]');
+                delBtn.addEventListener('click', async () => {
+                    if (confirm('Удалить тему ' + theme.name + '?')) {
+                        if (window.discordExtensions && window.discordExtensions.deleteTheme) {
+                            await window.discordExtensions.deleteTheme(theme.fileName);
+                            await loadThemesUI();
+                        }
+                    }
+                });
+
+                container.appendChild(card);
+            }
+        }
+
+        // Download Theme by URL
+        const btnDownloadTheme = document.getElementById('btn-download-theme');
+        const inputThemeUrl = document.getElementById('theme-download-url');
+        if (btnDownloadTheme && inputThemeUrl) {
+            btnDownloadTheme.addEventListener('click', async () => {
+                const url = inputThemeUrl.value.trim();
+                if (!url) return;
+                btnDownloadTheme.disabled = true;
+                btnDownloadTheme.textContent = 'Загрузка...';
+                try {
+                    const res = await window.discordExtensions.downloadThemeUrl(url);
+                    if (res && res.success) {
+                        inputThemeUrl.value = '';
+                        await loadThemesUI();
+                    } else {
+                        alert('Ошибка скачивания: ' + (res ? res.error : 'Неизвестная ошибка'));
+                    }
+                } finally {
+                    btnDownloadTheme.disabled = false;
+                    btnDownloadTheme.textContent = 'Загрузить тему';
+                }
+            });
+        }
+
+        // Open Themes Directory
+        document.getElementById('btn-open-themes-dir').addEventListener('click', () => {
+            if (window.discordExtensions && window.discordExtensions.openThemesDir) {
+                window.discordExtensions.openThemesDir();
+            }
+        });
+
+        // Refresh Themes List
+        document.getElementById('btn-refresh-themes').addEventListener('click', () => {
+            loadThemesUI();
+        });
+
+        // ==========================================
+        // DOWNLOADED USER PLUGINS
+        // ==========================================
+        async function loadUserPlugins() {
+            if (!window.discordExtensions || !window.discordExtensions.getDownloadedPlugins) return;
+            const container = document.getElementById('user-plugins-list-container');
+            if (!container) return;
+            try {
+                const list = await window.discordExtensions.getDownloadedPlugins();
+                container.innerHTML = '';
+                if (!list || list.length === 0) {
+                    const emptyCard = document.createElement('div');
+                    emptyCard.className = 'card';
+                    emptyCard.innerHTML = `
+                        <div class="card-info">
+                            <div class="card-title">Папка плагинов пуста</div>
+                            <div class="card-desc">Поместите файлы .js плагинов в каталог extensions/data/plugins для автоматической загрузки.</div>
+                        </div>
+                    `;
+                    container.appendChild(emptyCard);
+                    return;
+                }
+
+                for (const item of list) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-info">
+                            <div class="card-title">${item.name}</div>
+                            <div class="card-desc">Файл: ${item.fileName} &bull; Размер: ${(item.size / 1024).toFixed(1)} КБ</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked disabled>
+                            <span class="slider"></span>
+                        </label>
+                    `;
+                    container.appendChild(card);
+                }
+            } catch (e) {
+                console.error('Failed to load user plugins:', e);
+            }
+        }
+
+        document.getElementById('btn-open-plugins-dir').addEventListener('click', () => {
+            if (window.discordExtensions && window.discordExtensions.openPluginsDir) {
+                window.discordExtensions.openPluginsDir();
+            }
+        });
+
+        document.getElementById('btn-refresh-user-plugins').addEventListener('click', () => {
+            loadUserPlugins();
+        });
+
+        // ==========================================
+        // CUSTOM RPC BUILDER & LIVE PREVIEW
+        // ==========================================
+        let customRPCData = {
+            enabled: false,
+            rotationInterval: 12,
+            slides: []
+        };
+        let currentSlideIndex = 0;
+
+        function updateRpcPreview() {
+            const cur = (customRPCData.slides && customRPCData.slides[currentSlideIndex]) || {};
+
+            const typeMap = {
+                0: 'ИГРАЕТ В ИГРУ',
+                1: 'СТРИМИТ',
+                2: 'СЛУШАЕТ',
+                3: 'СМОТРИТ',
+                5: 'СОРЕВНУЕТСЯ'
+            };
+
+            const headerEl = document.getElementById('rpc-prev-type');
+            if (headerEl) headerEl.textContent = typeMap[cur.type || 0] || 'ИГРАЕТ В ИГРУ';
+
+            const nameEl = document.getElementById('rpc-prev-name');
+            if (nameEl) nameEl.textContent = cur.name || 'Название активности';
+
+            const detailsEl = document.getElementById('rpc-prev-details');
+            if (detailsEl) detailsEl.textContent = cur.details || '';
+
+            const stateEl = document.getElementById('rpc-prev-state');
+            if (stateEl) stateEl.textContent = cur.state || '';
+
+            const largeImgEl = document.getElementById('rpc-prev-large-img');
+            if (largeImgEl) {
+                const imgKey = cur.largeImageKey || cur.largeImage;
+                largeImgEl.src = imgKey || 'https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png';
+            }
+
+            const smallImgEl = document.getElementById('rpc-prev-small-img');
+            if (smallImgEl) {
+                const smallKey = cur.smallImageKey || cur.smallImage;
+                if (smallKey) {
+                    smallImgEl.src = smallKey;
+                    smallImgEl.style.display = 'block';
+                } else {
+                    smallImgEl.style.display = 'none';
+                }
+            }
+
+            const btn1El = document.getElementById('rpc-prev-btn1');
+            if (btn1El) {
+                if (cur.button1Text) {
+                    btn1El.textContent = cur.button1Text;
+                    btn1El.style.display = 'block';
+                } else {
+                    btn1El.style.display = 'none';
+                }
+            }
+
+            const btn2El = document.getElementById('rpc-prev-btn2');
+            if (btn2El) {
+                if (cur.button2Text) {
+                    btn2El.textContent = cur.button2Text;
+                    btn2El.style.display = 'block';
+                } else {
+                    btn2El.style.display = 'none';
+                }
+            }
+        }
+
+        function populateSlideForm(index) {
+            if (!customRPCData.slides || !customRPCData.slides[index]) return;
+            currentSlideIndex = index;
+            const slide = customRPCData.slides[index];
+
+            document.getElementById('rpc-name').value = slide.name || '';
+            document.getElementById('rpc-type').value = String(slide.type || 0);
+            document.getElementById('rpc-details').value = slide.details || '';
+            document.getElementById('rpc-state').value = slide.state || '';
+            document.getElementById('rpc-large-img').value = slide.largeImageKey || slide.largeImage || '';
+            document.getElementById('rpc-large-text').value = slide.largeImageText || slide.largeText || '';
+            document.getElementById('rpc-small-img').value = slide.smallImageKey || slide.smallImage || '';
+            document.getElementById('rpc-small-text').value = slide.smallImageText || slide.smallText || '';
+            document.getElementById('rpc-btn1-text').value = slide.button1Text || '';
+            document.getElementById('rpc-btn1-url').value = slide.button1Url || '';
+            document.getElementById('rpc-btn2-text').value = slide.button2Text || '';
+            document.getElementById('rpc-btn2-url').value = slide.button2Url || '';
+
+            renderSlideTabs();
+            updateRpcPreview();
+        }
+
+        function readSlideFormIntoCurrent() {
+            if (!customRPCData.slides) customRPCData.slides = [];
+            if (!customRPCData.slides[currentSlideIndex]) {
+                customRPCData.slides[currentSlideIndex] = {};
+            }
+            const slide = customRPCData.slides[currentSlideIndex];
+            slide.name = document.getElementById('rpc-name').value.trim();
+            slide.type = parseInt(document.getElementById('rpc-type').value, 10) || 0;
+            slide.details = document.getElementById('rpc-details').value.trim();
+            slide.state = document.getElementById('rpc-state').value.trim();
+            const largeUrl = document.getElementById('rpc-large-img').value.trim();
+            slide.largeImageKey = largeUrl;
+            slide.largeImage = largeUrl;
+            slide.largeImageText = document.getElementById('rpc-large-text').value.trim();
+            const smallUrl = document.getElementById('rpc-small-img').value.trim();
+            slide.smallImageKey = smallUrl;
+            slide.smallImage = smallUrl;
+            slide.smallImageText = document.getElementById('rpc-small-text').value.trim();
+            slide.button1Text = document.getElementById('rpc-btn1-text').value.trim();
+            slide.button1Url = document.getElementById('rpc-btn1-url').value.trim();
+            slide.button2Text = document.getElementById('rpc-btn2-text').value.trim();
+            slide.button2Url = document.getElementById('rpc-btn2-url').value.trim();
+            updateRpcPreview();
+        }
+
+        function renderSlideTabs() {
+            const container = document.getElementById('rpc-slides-tabs-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            (customRPCData.slides || []).forEach((_, idx) => {
+                const pill = document.createElement('button');
+                pill.className = 'rpc-slide-pill' + (idx === currentSlideIndex ? ' active' : '');
+                pill.textContent = 'Слайд ' + (idx + 1);
+                pill.addEventListener('click', () => {
+                    readSlideFormIntoCurrent();
+                    populateSlideForm(idx);
+                });
+                container.appendChild(pill);
+            });
+        }
+
+        // Live input listeners for instant preview
+        ['rpc-name', 'rpc-type', 'rpc-details', 'rpc-state', 'rpc-large-img', 'rpc-large-text', 'rpc-small-img', 'rpc-small-text', 'rpc-btn1-text', 'rpc-btn1-url', 'rpc-btn2-text', 'rpc-btn2-url'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => {
+                    readSlideFormIntoCurrent();
+                });
+                el.addEventListener('change', () => {
+                    readSlideFormIntoCurrent();
+                });
+            }
+        });
+
+        // Add Slide
+        document.getElementById('btn-add-slide').addEventListener('click', () => {
+            readSlideFormIntoCurrent();
+            customRPCData.slides.push({
+                name: 'Новый статус',
+                type: 0,
+                details: 'Активность в Discord',
+                state: 'discord extensions',
+                largeImageKey: 'https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png',
+                largeImage: 'https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png',
+                button1Text: 'Поддержать на Ko fi',
+                button1Url: 'https://ko-fi.com/krejzibro'
+            });
+            populateSlideForm(customRPCData.slides.length - 1);
+        });
+
+        // Delete Slide
+        document.getElementById('btn-del-slide').addEventListener('click', () => {
+            if (customRPCData.slides.length <= 1) {
+                alert('Нельзя удалить последний слайд');
+                return;
+            }
+            customRPCData.slides.splice(currentSlideIndex, 1);
+            currentSlideIndex = Math.max(0, currentSlideIndex - 1);
+            populateSlideForm(currentSlideIndex);
+        });
+
+        // Quick Presets
+        document.getElementById('preset-vscode').addEventListener('click', () => {
+            document.getElementById('rpc-name').value = 'Visual Studio Code';
+            document.getElementById('rpc-type').value = '0';
+            document.getElementById('rpc-details').value = 'Редактирует extensionsManager.html';
+            document.getElementById('rpc-state').value = 'Рабочая область: discord extensions';
+            document.getElementById('rpc-large-img').value = 'https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png';
+            document.getElementById('rpc-large-text').value = 'Visual Studio Code';
+            document.getElementById('rpc-small-img').value = 'https://assets.stickpng.com/images/5848309bcef1014c0b5e4a9a.png';
+            document.getElementById('rpc-small-text').value = 'VS Code';
+            document.getElementById('rpc-btn1-text').value = 'Поддержать на Ko fi';
+            document.getElementById('rpc-btn1-url').value = 'https://ko-fi.com/krejzibro';
+            readSlideFormIntoCurrent();
+        });
+
+        document.getElementById('preset-cyberpunk').addEventListener('click', () => {
+            document.getElementById('rpc-name').value = 'Cyberpunk 2077';
+            document.getElementById('rpc-type').value = '0';
+            document.getElementById('rpc-details').value = 'Исследует Найт Сити';
+            document.getElementById('rpc-state').value = 'Миссия: По ком звонит колокол';
+            document.getElementById('rpc-large-img').value = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500';
+            document.getElementById('rpc-large-text').value = 'Cyberpunk 2077';
+            document.getElementById('rpc-small-img').value = '';
+            document.getElementById('rpc-small-text').value = '';
+            document.getElementById('rpc-btn1-text').value = 'Поддержать на Ko fi';
+            document.getElementById('rpc-btn1-url').value = 'https://ko-fi.com/krejzibro';
+            readSlideFormIntoCurrent();
+        });
+
+        document.getElementById('preset-music').addEventListener('click', () => {
+            document.getElementById('rpc-name').value = 'Synthwave Radio';
+            document.getElementById('rpc-type').value = '0';
+            document.getElementById('rpc-details').value = 'Lorn Acid Rain';
+            document.getElementById('rpc-state').value = 'Альбом: The Maze To Nowhere';
+            document.getElementById('rpc-large-img').value = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500';
+            document.getElementById('rpc-large-text').value = 'Hi Fi Audio';
+            document.getElementById('rpc-btn1-text').value = 'Поддержать на Ko fi';
+            document.getElementById('rpc-btn1-url').value = 'https://ko-fi.com/krejzibro';
+            readSlideFormIntoCurrent();
+        });
+
+        document.getElementById('preset-kofi').addEventListener('click', () => {
+            document.getElementById('rpc-name').value = 'Discord Extensions';
+            document.getElementById('rpc-type').value = '0';
+            document.getElementById('rpc-details').value = 'Разработка модулей и квестов';
+            document.getElementById('rpc-state').value = 'Поддержать автора проекта';
+            document.getElementById('rpc-large-img').value = 'https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png';
+            document.getElementById('rpc-large-text').value = 'Ko fi KrejziBro';
+            document.getElementById('rpc-btn1-text').value = 'Поддержать на Ko fi';
+            document.getElementById('rpc-btn1-url').value = 'https://ko-fi.com/krejzibro';
+            readSlideFormIntoCurrent();
+        });
+
+        // Save CustomRPC
+        document.getElementById('btn-save-rpc').addEventListener('click', async () => {
+            if (!window.discordExtensions || !window.discordExtensions.saveCustomRPC) return;
+            readSlideFormIntoCurrent();
+            customRPCData.enabled = document.getElementById('rpc-enabled').checked;
+            customRPCData.rotationInterval = parseInt(document.getElementById('rpc-rotation-interval').value, 10) || 12;
+
+            await window.discordExtensions.saveCustomRPC(customRPCData);
+            const btn = document.getElementById('btn-save-rpc');
+            const orig = btn.textContent;
+            btn.textContent = 'Сохранено!';
+            setTimeout(() => { btn.textContent = orig; }, 1500);
+        });
+
+        async function loadCustomRPCUI() {
+            if (!window.discordExtensions || !window.discordExtensions.getCustomRPC) return;
+            try {
+                const rpc = await window.discordExtensions.getCustomRPC();
+                if (rpc) {
+                    customRPCData = rpc;
+                    document.getElementById('rpc-enabled').checked = Boolean(rpc.enabled);
+                    document.getElementById('rpc-rotation-interval').value = rpc.rotationInterval || 12;
+                    if (!Array.isArray(rpc.slides) || rpc.slides.length === 0) {
+                        customRPCData.slides = [{
+                            name: 'Visual Studio Code',
+                            type: 0,
+                            details: 'Разработка Discord Extensions',
+                            state: 'JavaScript & Electron',
+                            largeImageKey: 'https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png',
+                            largeImage: 'https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png',
+                            button1Text: 'Поддержать на Ko fi',
+                            button1Url: 'https://ko-fi.com/krejzibro'
+                        }];
+                    }
+                    populateSlideForm(0);
+                }
+            } catch (e) {
+                console.error('Failed to load CustomRPC config:', e);
+            }
+        }
+
+        // Custom CSS Save
+        document.getElementById('btn-save-css').addEventListener('click', async () => {
+            if (!window.discordExtensions) return;
+            const css = document.getElementById('custom-css-input').value;
+            await window.discordExtensions.saveCustomCss(css);
+            const btnText = document.getElementById('btn-save-css-text');
+            const original = btnText.textContent;
+            btnText.textContent = currentLang === 'ru' ? 'Готово!' : 'Done!';
+            setTimeout(() => { btnText.textContent = original; }, 1500);
+        });
+
+        // ==========================================
+        // PLUGINS RENDERER AND SEARCH
+        // ==========================================
+        let activePluginSubtab = 'browser';
+
+        const subtabBrowserBtn = document.getElementById('subtab-plugins-browser');
+        const subtabEnabledBtn = document.getElementById('subtab-plugins-enabled');
+        if (subtabBrowserBtn && subtabEnabledBtn) {
+            subtabBrowserBtn.addEventListener('click', () => {
+                activePluginSubtab = 'browser';
+                subtabBrowserBtn.style.background = '#5865F2';
+                subtabBrowserBtn.style.color = '#FFFFFF';
+                subtabBrowserBtn.style.border = 'none';
+                subtabEnabledBtn.style.background = '#2b2d31';
+                subtabEnabledBtn.style.color = '#949BA4';
+                subtabEnabledBtn.style.border = '1px solid #35373C';
+                renderPluginsList();
+            });
+            subtabEnabledBtn.addEventListener('click', () => {
+                activePluginSubtab = 'enabled';
+                subtabEnabledBtn.style.background = '#5865F2';
+                subtabEnabledBtn.style.color = '#FFFFFF';
+                subtabEnabledBtn.style.border = 'none';
+                subtabBrowserBtn.style.background = '#2b2d31';
+                subtabBrowserBtn.style.color = '#949BA4';
+                subtabBrowserBtn.style.border = '1px solid #35373C';
+                renderPluginsList();
+            });
+        }
+
+        function updatePluginsCounter() {
+            const counterEl = document.getElementById('plugins-counter');
+            const enabledCount = allPluginsList.filter(p => p.enabled).length;
+            const totalCount = allPluginsList.length;
+            if (counterEl) {
+                const t = I18N[currentLang];
+                counterEl.textContent = t.enabledCountLabel
+                    .replace('{count}', enabledCount)
+                    .replace('{total}', totalCount);
+            }
+            const bEl = document.getElementById('count-subtab-browser');
+            if (bEl) bEl.textContent = totalCount;
+            const eEl = document.getElementById('count-subtab-enabled');
+            if (eEl) eEl.textContent = enabledCount;
+        }
+
+        function renderPluginsList() {
+            const container = document.getElementById('plugins-list-container');
+            if (!container) return;
+
+            const searchInput = document.getElementById('plugin-search-input');
+            const searchQuery = (searchInput ? searchInput.value : '').trim().toLowerCase();
+
+            const filtered = allPluginsList.filter(plugin => {
+                if (activePluginSubtab === 'enabled' && !plugin.enabled) return false;
+
+                const matchesTag = (activeTagFilter === 'all') || (plugin.tags && plugin.tags.some(tag => {
+                    if (activeTagFilter === 'Voice') return tag === 'Voice' || tag === 'Media';
+                    if (activeTagFilter === 'Servers') return tag === 'Servers' || tag === 'Roles';
+                    if (activeTagFilter === 'Emotes') return tag === 'Emotes' || tag === 'Reactions';
+                    return tag.toLowerCase() === activeTagFilter.toLowerCase();
+                }));
+                if (!matchesTag) return false;
+
+                if (!searchQuery) return true;
+                const matchName = plugin.name.toLowerCase().includes(searchQuery);
+                const matchDesc = (plugin.description || '').toLowerCase().includes(searchQuery);
+                const matchTags = (plugin.tags || []).some(t => t.toLowerCase().includes(searchQuery));
+                return matchName || matchDesc || matchTags;
+            });
+
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                const emptyCard = document.createElement('div');
+                emptyCard.className = 'card';
+                const emptyMsg = activePluginSubtab === 'enabled'
+                    ? (currentLang === 'ru' ? 'Нет включенных плагинов' : 'No enabled plugins')
+                    : I18N[currentLang].noPluginsFound;
+                emptyCard.innerHTML = `
+                    <div class="card-info">
+                        <div class="card-title">${emptyMsg}</div>
+                    </div>
+                `;
+                container.appendChild(emptyCard);
+                return;
+            }
+
+            for (const plugin of filtered) {
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                const cleanDesc = (plugin.description || '')
+                    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212-]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                const tagSpans = (plugin.tags || []).map(t => {
+                    const cleanTag = t.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212-]/g, ' ');
+                    return `<span class="plugin-tag-item">${cleanTag}</span>`;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="card-info">
+                        <div class="card-title">${plugin.name}</div>
+                        <div class="card-desc">${cleanDesc}</div>
+                        <div class="plugin-tag-list">${tagSpans}</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" ${plugin.enabled ? 'checked' : ''} data-plugin="${plugin.name}">
+                        <span class="slider"></span>
+                    </label>
+                `;
+
+                const checkbox = card.querySelector('input');
+                checkbox.addEventListener('change', async () => {
+                    plugin.enabled = checkbox.checked;
+                    updatePluginsCounter();
+                    document.getElementById('restart-bar').classList.remove('hidden');
+                    if (window.discordExtensions) {
+                        await window.discordExtensions.togglePlugin(plugin.name, plugin.enabled);
+                    }
+                    if (activePluginSubtab === 'enabled') {
+                        renderPluginsList();
+                    }
+                });
+
+                container.appendChild(card);
+            }
+        }
+
+        async function loadPlugins() {
+            if (!window.discordExtensions || !window.discordExtensions.getPlugins) return;
+            try {
+                const list = await window.discordExtensions.getPlugins();
+                if (Array.isArray(list) && list.length > 0) {
+                    allPluginsList = list;
+                    updatePluginsCounter();
+                    renderPluginsList();
+                }
+            } catch (e) {
+                console.error('Failed to load plugins:', e);
+            }
+        }
+
+        // Tag Filters
+        document.querySelectorAll('.tag-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                document.querySelectorAll('.tag-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                activeTagFilter = pill.getAttribute('data-tag');
+                renderPluginsList();
+            });
+        });
+
+        // Search Input
+        const pluginSearchInputEl = document.getElementById('plugin-search-input');
+        if (pluginSearchInputEl) {
+            pluginSearchInputEl.addEventListener('input', () => {
+                renderPluginsList();
+            });
+        }
+
+        // Quests Controls Binding
+        let questsCurrentStatus = null;
+
+        function updateQuestsUIFromStatus(status) {
+            if (!status) return;
+            questsCurrentStatus = status;
+
+            const badgeEl = document.getElementById('quests-status-badge');
+            const titleEl = document.getElementById('quests-status-title');
+            const msgEl = document.getElementById('quests-status-msg');
+            const barEl = document.getElementById('quests-progress-bar');
+            const btnEl = document.getElementById('btn-start-quests-text');
+            const btnStart = document.getElementById('btn-start-quests');
+
+            const hasClaim = Number(status.unclaimedCount) > 0;
+            const isRunning = Boolean(status.running);
+            const isFinished = Boolean(status.allFinished);
+
+            if (titleEl) {
+                titleEl.textContent = status.questName || (currentLang === 'ru' ? 'Автоматические задания' : 'Discord Quests');
+            }
+
+            if (msgEl) {
+                msgEl.textContent = status.statusMsg || (currentLang === 'ru' ? 'Нажмите кнопку для старта сбора' : 'Click button to start');
+            }
+
+            if (barEl) {
+                const pct = status.secondsNeeded > 0 ? Math.min(100, Math.round((status.secondsDone / status.secondsNeeded) * 100)) : (isFinished ? 100 : 0);
+                barEl.style.width = pct + '%';
+                barEl.style.background = hasClaim ? '#FEE75C' : (isFinished ? '#23A55A' : '#5865F2');
+            }
+
+            if (badgeEl) {
+                if (hasClaim) {
+                    badgeEl.textContent = currentLang === 'ru' ? 'НАГРАДА' : 'REWARD';
+                    badgeEl.style.background = '#FEE75C';
+                    badgeEl.style.color = '#000000';
+                } else if (isRunning) {
+                    badgeEl.textContent = currentLang === 'ru' ? 'АКТИВНО' : 'ACTIVE';
+                    badgeEl.style.background = '#23A55A';
+                    badgeEl.style.color = '#FFFFFF';
+                } else if (isFinished) {
+                    badgeEl.textContent = currentLang === 'ru' ? 'ЗАВЕРШЕНО' : 'DONE';
+                    badgeEl.style.background = '#5865F2';
+                    badgeEl.style.color = '#FFFFFF';
+                } else {
+                    badgeEl.textContent = currentLang === 'ru' ? 'ГОТОВ' : 'READY';
+                    badgeEl.style.background = '#5865F2';
+                    badgeEl.style.color = '#FFFFFF';
+                }
+            }
+
+            if (btnEl) {
+                if (hasClaim) {
+                    btnEl.textContent = currentLang === 'ru' ? 'Забрать Orbs' : 'Claim Orbs';
+                    if (btnStart) btnStart.style.background = '#23A55A';
+                } else if (isRunning) {
+                    btnEl.textContent = I18N[currentLang].btnStopQuests;
+                    if (btnStart) btnStart.style.background = '#DA373C';
+                } else if (isFinished) {
+                    btnEl.textContent = currentLang === 'ru' ? 'Проверить снова' : 'Check again';
+                    if (btnStart) btnStart.style.background = '#5865F2';
+                } else {
+                    btnEl.textContent = I18N[currentLang].btnStartQuests;
+                    if (btnStart) btnStart.style.background = '#5865F2';
+                }
+            }
+        }
+
+        const btnStartQuestsEl = document.getElementById('btn-start-quests');
+        if (btnStartQuestsEl) {
+            btnStartQuestsEl.addEventListener('click', async () => {
+                if (!window.discordExtensions) return;
+                btnStartQuestsEl.disabled = true;
+                try {
+                    if (questsCurrentStatus && questsCurrentStatus.unclaimedCount > 0) {
+                        await window.discordExtensions.claimQuest();
+                    } else if (questsCurrentStatus && questsCurrentStatus.running) {
+                        await window.discordExtensions.stopQuests();
+                    } else {
+                        await window.discordExtensions.startQuests();
+                    }
+                    await new Promise(r => setTimeout(r, 400));
+                    const st = await window.discordExtensions.getQuestsStatus();
+                    if (st) updateQuestsUIFromStatus(st);
+                } finally {
+                    btnStartQuestsEl.disabled = false;
+                }
+            });
+        }
+
+        const RAW_QUESTS_SCRIPT = "delete window.$;\nlet wpRequire = webpackChunkdiscord_app.push([[Symbol()], {}, r => r]);\nwebpackChunkdiscord_app.pop();\n\nlet ApplicationStreamingStore = Object.values(wpRequire.c).find(x => x?.exports?.A?.__proto__?.getStreamerActiveStreamMetadata).exports.A;\nlet RunningGameStore = Object.values(wpRequire.c).find(x => x?.exports?.Ay?.getRunningGames).exports.Ay;\nlet QuestsStore = Object.values(wpRequire.c).find(x => x?.exports?.A?.__proto__?.getQuest).exports.A;\nlet ChannelStore = Object.values(wpRequire.c).find(x => x?.exports?.A?.__proto__?.getAllThreadsForParent).exports.A;\nlet GuildChannelStore = Object.values(wpRequire.c).find(x => x?.exports?.Ay?.getSFWDefaultChannel).exports.Ay;\nlet FluxDispatcher = Object.values(wpRequire.c).find(x => x?.exports?.h?.__proto__?.flushWaitQueue).exports.h;\nlet api = Object.values(wpRequire.c).find(x => x?.exports?.Bo?.get).exports.Bo;\n\nconst supportedTasks = [\"WATCH_VIDEO\", \"PLAY_ON_DESKTOP\", \"STREAM_ON_DESKTOP\", \"PLAY_ACTIVITY\", \"WATCH_VIDEO_ON_MOBILE\"];\n\nconst claimReward = async (q) => {\n    try {\n        await api.post({ url: `/quests/${q.id}/claim-reward`, body: { location: 1, platform: 0 } });\n    } catch (_) {\n        try { await api.post({ url: `/quests/${q.id}/claim-reward`, body: { location: 1 } }); } catch (_) {\n            try { await api.post({ url: `/quests/${q.id}/claim`, body: { location: 1 } }); } catch (_) {}\n        }\n    }\n};\n";
+
+        const btnCopyScriptEl = document.getElementById('btn-copy-quests-script');
+        if (btnCopyScriptEl) {
+            btnCopyScriptEl.addEventListener('click', () => {
+                navigator.clipboard.writeText(RAW_QUESTS_SCRIPT).then(() => {
+                    const txt = document.getElementById('btn-copy-script-text');
+                    const orig = txt.textContent;
+                    txt.textContent = I18N[currentLang].scriptCopied;
+                    setTimeout(() => { txt.textContent = orig; }, 1800);
+                }).catch(() => {
+                    alert('Не удалось скопировать скрипт автоматически');
+                });
+            });
+        }
+
+        // ==========================================
+        // CONFIG & INITIALIZATION
+        // ==========================================
+        const configKeys = [
+            'showDockButton',
+            'autoCollectQuests',
+            'showQuestsWidget',
+            'hardwareAcceleration',
+            'blockTelemetry',
+            'extraOptimization'
+        ];
+
+        async function initConfig() {
+            if (!window.discordExtensions) return;
+
+            const locale = await window.discordExtensions.getLocale();
+            applyLanguage(locale === 'ru' ? 'ru' : 'en');
+
+            const cfg = await window.discordExtensions.getConfig();
+
+            if (cfg.dockPosition && dockPosSelect) {
+                dockPosSelect.value = cfg.dockPosition;
+                updateDockPreview(cfg.dockPosition);
+            }
+
+            const restartRequiredKeys = [
+                'hardwareAcceleration',
+                'blockTelemetry',
+                'extraOptimization'
+            ];
+
+            for (const key of configKeys) {
+                const el = document.getElementById('cfg-' + key);
+                if (el) {
+                    el.checked = Boolean(cfg[key]);
+                    el.addEventListener('change', () => {
+                        window.discordExtensions.saveConfig({ [key]: el.checked });
+                        if (restartRequiredKeys.includes(key)) {
+                            document.getElementById('restart-bar').classList.remove('hidden');
+                        }
+                    });
+                }
+            }
+
+            document.getElementById('btn-restart-discord').addEventListener('click', () => {
+                if (window.discordExtensions) {
+                    window.discordExtensions.relaunchDiscord();
+                }
+            });
+
+            const customCss = await window.discordExtensions.getCustomCss();
+            document.getElementById('custom-css-input').value = customCss || '';
+
+            await loadPlugins();
+            await loadUserPlugins();
+            await loadThemesUI();
+            await loadCustomRPCUI();
+            await loadChromeExtensions();
+
+            if (window.discordExtensions && window.discordExtensions.onConfigUpdated) {
+                window.discordExtensions.onConfigUpdated((newCfg) => {
+                    if (newCfg && typeof newCfg.showQuestsWidget === 'boolean') {
+                        const sw = document.getElementById('cfg-showQuestsWidget');
+                        if (sw) sw.checked = Boolean(newCfg.showQuestsWidget);
+                    }
+                    if (newCfg && newCfg.dockPosition && dockPosSelect) {
+                        dockPosSelect.value = newCfg.dockPosition;
+                        updateDockPreview(newCfg.dockPosition);
+                    }
+                });
+            }
+
+            // Quests status polling
+            setInterval(async () => {
+                if (window.discordExtensions && window.discordExtensions.getQuestsStatus) {
+                    const st = await window.discordExtensions.getQuestsStatus();
+                    if (st) updateQuestsUIFromStatus(st);
+                }
+            }, 1000);
+        }
+
+        async function loadChromeExtensions() {
+            if (!window.discordExtensions) return;
+            const exts = await window.discordExtensions.getExtensions();
+            const container = document.getElementById('chrome-extensions-list');
+            if (!exts || exts.length === 0) return;
+
+            container.innerHTML = '';
+            for (const ext of exts) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-info">
+                        <div class="card-title">${ext.name} <span style="font-size:11px;color:#80848E;">v${ext.version}</span></div>
+                        <div class="card-desc">${ext.description || ext.folder}</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" ${ext.enabled ? 'checked' : ''} data-folder="${ext.folder}">
+                        <span class="slider"></span>
+                    </label>
+                `;
+                const cb = card.querySelector('input');
+                cb.addEventListener('change', () => {
+                    window.discordExtensions.toggleExtension(ext.folder, cb.checked);
+                });
+                container.appendChild(card);
+            }
+        }
+
+        // Update Checking
+        function renderUpdateInfo(res) {
+            if (!res || !res.updateAvailable) return;
+            const banner = document.getElementById('update-banner');
+            if (!banner) return;
+            banner.style.display = 'flex';
+            const titleEl = document.getElementById('banner-update-title');
+            const descEl = document.getElementById('banner-update-desc');
+            const applyBtn = document.getElementById('btn-apply-update');
+            const rBtn = document.getElementById('btn-update-restart');
+
+            if (titleEl) titleEl.textContent = (I18N[currentLang].updateFound || 'Доступна версия ') + res.latestVersion;
+
+            if (res.updatePendingRestart) {
+                if (descEl) descEl.textContent = I18N[currentLang].updatedNeedRestart || 'Обновлено! Требуется перезапуск для применения.';
+                if (applyBtn) applyBtn.style.display = 'none';
+                if (rBtn) {
+                    rBtn.style.display = 'inline-flex';
+                    rBtn.onclick = () => window.discordExtensions.relaunchDiscord();
+                }
+            } else {
+                if (descEl) descEl.textContent = res.changelog || (I18N[currentLang].bannerUpdateDesc || 'Нажмите кнопку для установки обновления.');
+                if (applyBtn) {
+                    applyBtn.style.display = 'inline-flex';
+                    applyBtn.textContent = 'Обновить сейчас';
+                    applyBtn.disabled = false;
+                }
+                if (rBtn) rBtn.style.display = 'none';
+            }
+        }
+
+        document.getElementById('btn-check-update').addEventListener('click', async () => {
+            if (!window.discordExtensions) return;
+            const btnText = document.getElementById('btn-check-update-text');
+            btnText.textContent = I18N[currentLang].btnChecking;
+
+            const res = await window.discordExtensions.checkForUpdates();
+            btnText.textContent = I18N[currentLang].btnCheckUpdates;
+
+            if (res && res.updateAvailable) {
+                renderUpdateInfo(res);
+            } else {
+                alert(I18N[currentLang].updateNotFound);
+            }
+        });
+
+        document.getElementById('btn-apply-update').addEventListener('click', async () => {
+            if (!window.discordExtensions) return;
+            const applyBtn = document.getElementById('btn-apply-update');
+            applyBtn.textContent = '...';
+            applyBtn.disabled = true;
+            const res = await window.discordExtensions.applyUpdate();
+
+            if (res && res.success) {
+                const descEl = document.getElementById('banner-update-desc');
+                const rBtn = document.getElementById('btn-update-restart');
+                if (res.restartRequired) {
+                    if (descEl) descEl.textContent = I18N[currentLang].updatedNeedRestart;
+                    applyBtn.style.display = 'none';
+                    if (rBtn) {
+                        rBtn.style.display = 'inline-flex';
+                        rBtn.onclick = () => window.discordExtensions.relaunchDiscord();
+                    }
+                } else {
+                    if (descEl) descEl.textContent = I18N[currentLang].updatedNoRestart;
+                    applyBtn.textContent = 'OK';
+                    applyBtn.disabled = true;
+                }
+            } else {
+                applyBtn.textContent = 'Ошибка';
+                applyBtn.disabled = false;
+            }
+        });
+
+        if (window.discordExtensions && window.discordExtensions.onUpdateAvailable) {
+            window.discordExtensions.onUpdateAvailable((res) => {
+                renderUpdateInfo(res);
+            });
+        }
+
+        setTimeout(async () => {
+            try {
+                if (window.discordExtensions?.checkForUpdates) {
+                    const res = await window.discordExtensions.checkForUpdates();
+                    if (res && res.updateAvailable) {
+                        renderUpdateInfo(res);
+                    }
+                }
+            } catch (_) {}
+        }, 150);
+
+        window.addEventListener('DOMContentLoaded', initConfig);
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "version": "1.0.1",
+  "name": "Discord Extensions",
+  "updateUrl": "https://raw.githubusercontent.com/KreziBro/discord-extensions/main/version.json",
+  "zipUrl": "https://github.com/KreziBro/discord-extensions/archive/refs/heads/main.zip",
+  "requiresRestart": true,
+  "changelog": "Исправление сохранения градиентных тем Discord при перезапуске и холодном старте"
+}
