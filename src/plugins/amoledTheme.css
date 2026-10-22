@@ -1,0 +1,35 @@
+/* Discord Extensions AMOLED Theme */
+:root {
+    --background-primary: #000000 !important;
+    --background-secondary: #050505 !important;
+    --background-secondary-alt: #0a0a0a !important;
+    --background-tertiary: #000000 !important;
+    --background-floating: #0a0a0a !important;
+    --channeltextarea-background: #0d0d0d !important;
+    --background-accent: #1e1f22 !important;
+    --activity-card-background: #050505 !important;
+}
+
+body,
+[class*="appMount"],
+[class*="appAsidePanelWrapper"],
+[class*="layers"],
+[class*="layer-"],
+[class*="container-"][class*="themed-"],
+[class*="chat-"],
+[class*="chatContent-"],
+[class*="messagesWrapper-"],
+[class*="scroller-"],
+[class*="sidebar-"],
+[class*="guilds-"] {
+    background-color: #000000 !important;
+}
+
+[class*="panels-"],
+[class*="container-"][class*="fixed-"] {
+    background-color: #050505 !important;
+}
+
+[class*="channelTextArea-"] {
+    background-color: #0d0d0d !important;
+}

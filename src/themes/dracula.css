@@ -1,0 +1,36 @@
+/* Discord Extensions Dracula Theme */
+:root {
+    --background-primary: #282a36 !important;
+    --background-secondary: #21222c !important;
+    --background-secondary-alt: #191a21 !important;
+    --background-tertiary: #1e1f29 !important;
+    --background-floating: #282a36 !important;
+    --channeltextarea-background: #343746 !important;
+    --background-accent: #44475a !important;
+    --brand-experiment: #bd93f9 !important;
+    --header-primary: #f8f8f2 !important;
+    --header-secondary: #6272a4 !important;
+    --text-normal: #f8f8f2 !important;
+    --text-muted: #6272a4 !important;
+    --text-link: #8be9fd !important;
+}
+
+body,
+[class*="appMount"],
+[class*="appAsidePanelWrapper"],
+[class*="chat-"],
+[class*="chatContent-"],
+[class*="messagesWrapper-"],
+[class*="sidebar-"],
+[class*="guilds-"] {
+    background-color: #282a36 !important;
+}
+
+[class*="panels-"],
+[class*="container-"][class*="fixed-"] {
+    background-color: #21222c !important;
+}
+
+[class*="channelTextArea-"] {
+    background-color: #343746 !important;
+}

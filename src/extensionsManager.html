@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Discord Extensions</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #313338;
+            color: #DBDEE1;
+            font-size: 14px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            height: 38px;
+            background-color: #1e1f22;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            -webkit-app-region: drag;
+            border-bottom: 1px solid #232428;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-left svg {
+            width: 20px;
+            height: 20px;
+            fill: #5865F2;
+        }
+
+        .title-text {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+        }
+
+        .version-badge {
+            background-color: #5865F2;
+            color: #FFFFFF;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .title-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-app-region: no-drag;
+        }
+
+        .win-btn {
+            width: 28px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: #949BA4;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .win-btn:hover {
+            background-color: #35373C;
+            color: #FFFFFF;
+        }
+
+        .win-btn.close:hover {
+            background-color: #DA373C;
+            color: #FFFFFF;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 230px;
+            background-color: #2b2d31;
+            padding: 18px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-right: 1px solid #232428;
+            overflow-y: auto;
+        }
+
+        .nav-category {
+            font-size: 11px;
+            font-weight: 700;
+            color: #949BA4;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            letter-spacing: 0.4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 14px;
+            border-radius: 6px;
+            color: #949BA4;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background-color: #35373c;
+            color: #DBDEE1;
+        }
+
+        .nav-item.active {
+            background-color: #404249;
+            color: #FFFFFF;
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 24px 32px;
+            overflow-y: auto;
+            background-color: #313338;
+        }
+
+        .section-header {
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #F2F3F5;
+            margin-bottom: 6px;
+        }
+
+        .section-desc {
+            font-size: 13px;
+            color: #949BA4;
+            line-height: 1.4;
+        }
+
+        /* Card */
+        .card {
+            background-color: #2b2d31;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #232428;
+            transition: border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: #3f4147;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-width: 80%;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #F2F3F5;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: #949BA4;
+            line-height: 1.4;
+        }
+
+        /* Theme Cards Grid */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .theme-card {
+            background-color: #2b2d31;
+            border: 2px solid #232428;
+            border-radius: 8px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .theme-card:hover {
+            border-color: #4e5058;
+        }
+
+        .theme-card.active {
+            border-color: #5865F2;
+            background-color: rgba(88, 101, 242, 0.08);
+        }
+
+        .theme-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .theme-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .theme-preview-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .theme-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .theme-card-desc {
+            font-size: 12px;
+            color: #949BA4;
+            line-height: 1.3;
+        }
+
+        /* Textarea for Custom CSS */
+        .css-textarea {
+            width: 100%;
+            height: 140px;
+            background-color: #1e1f22;
+            border: 1px solid #3f4147;
+            border-radius: 6px;
+            color: #F2F3F5;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            padding: 10px;
+            resize: vertical;
+            outline: none;
+            user-select: text;
+        }
+
+        .css-textarea:focus {
+            border-color: #5865F2;
+        }
+
+        /* Discord Pill Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #80848E;
+            transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #FFFFFF;
+            transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #5865F2;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Action Buttons */
+        .btn {
+            background-color: #5865F2;
+            color: #FFFFFF;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #4752C4;
+        }
+
+        .btn.secondary {
+            background-color: #4e5058;
+            color: #FFFFFF;
+        }
+
+        .btn.secondary:hover {
+            background-color: #6d6f78;
+        }
+
+        /* Update Banner */
+        .update-box {
+            background-color: #2b2d31;
+            border: 1px solid #5865F2;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .update-box h4 {
+            font-size: 15px;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+
+        .update-box p {
+            font-size: 12px;
+            color: #949BA4;
+        }
+
+        /* Footer */
+        .footer {
+            height: 48px;
+            background-color: #1e1f22;
+            border-top: 1px solid #232428;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-toggle {
+            background: #2b2d31;
+            border: 1px solid #3f4147;
+            color: #DBDEE1;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .lang-toggle:hover {
+            background: #35373c;
+            color: #FFF;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="title-left">
+            <svg viewBox="0 0 24 24">
+                <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09-.01-.02-.04-.03-.07-.03-1.5.26-2.93.71-4.27 1.33-.01 0-.02.01-.03.02-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05 1.8 1.32 3.53 2.12 5.24 2.65.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74.02-.04 0-.08-.04-.09-.57-.22-1.11-.48-1.64-.78-.04-.02-.04-.08-.01-.11.11-.08.22-.17.33-.25.02-.02.05-.02.07-.01 3.44 1.57 7.15 1.57 10.55 0 .02-.01.05-.01.07.01.11.09.22.17.33.26.04.03.04.09-.01.11-.52.31-1.07.56-1.64.78-.04.01-.05.06-.04.09.32.61.68 1.19 1.07 1.74.03.01.06.02.09.01 1.72-.53 3.45-1.33 5.25-2.65.02-.01.03-.03.03-.05.44-4.53-.73-8.46-3.1-11.95-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12 0 1.17-.83 2.12-1.89 2.12z"/>
+            </svg>
+            <span class="title-text" id="ui-title">Discord Extensions</span>
+            <span class="version-badge">v1.0.0</span>
+        </div>
+        <div class="title-controls">
+            <button class="win-btn" id="btn-minimize">_</button>
+            <button class="win-btn close" id="btn-close">&#x2715;</button>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="main-container">
+
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="nav-category" id="nav-cat-label">Управление</div>
+
+            <div class="nav-item active" data-tab="tab-themes">
+                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.58 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+                <span id="nav-themes">Темы оформления</span>
+            </div>
+
+            <div class="nav-item" data-tab="tab-chat">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                <span id="nav-chat">Чат и приватность</span>
+            </div>
+
+            <div class="nav-item" data-tab="tab-media">
+                <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                <span id="nav-media">Звук и медиа</span>
+            </div>
+
+            <div class="nav-item" data-tab="tab-ui">
+                <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                <span id="nav-ui">Интерфейс</span>
+            </div>
+
+            <div class="nav-item" data-tab="tab-performance">
+                <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                <span id="nav-performance">Оптимизация</span>
+            </div>
+
+            <div class="nav-item" data-tab="tab-chrome">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span id="nav-chrome">Расширения</span>
+            </div>
+
+            <div class="nav-item" data-tab="tab-updates">
+                <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                <span id="nav-updates">Обновления</span>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+
+            <!-- TAB: THEMES -->
+            <div class="tab-panel active" id="tab-themes">
+                <div class="section-header">
+                    <div class="section-title" id="sec-themes-title">Темы оформления</div>
+                    <div class="section-desc" id="sec-themes-desc">Выберите готовую палитру цветов или примените собственный CSS стиль.</div>
+                </div>
+
+                <div class="theme-grid">
+                    <div class="theme-card" data-theme="none">
+                        <div class="theme-card-header">
+                            <span class="theme-card-title" id="theme-default-title">По умолчанию</span>
+                            <div class="theme-preview-dots">
+                                <span class="theme-dot" style="background:#313338;"></span>
+                                <span class="theme-dot" style="background:#2b2d31;"></span>
+                                <span class="theme-dot" style="background:#5865F2;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-card-desc" id="theme-default-desc">Оригинальная темная тема Discord.</div>
+                    </div>
+
+                    <div class="theme-card" data-theme="amoled">
+                        <div class="theme-card-header">
+                            <span class="theme-card-title">AMOLED Black</span>
+                            <div class="theme-preview-dots">
+                                <span class="theme-dot" style="background:#000000; border:1px solid #333;"></span>
+                                <span class="theme-dot" style="background:#080808;"></span>
+                                <span class="theme-dot" style="background:#5865F2;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-card-desc" id="theme-amoled-desc">Глубокий чистый черный цвет для OLED дисплеев.</div>
+                    </div>
+
+                    <div class="theme-card" data-theme="dracula">
+                        <div class="theme-card-header">
+                            <span class="theme-card-title">Dracula</span>
+                            <div class="theme-preview-dots">
+                                <span class="theme-dot" style="background:#282a36;"></span>
+                                <span class="theme-dot" style="background:#bd93f9;"></span>
+                                <span class="theme-dot" style="background:#ff79c6;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-card-desc" id="theme-dracula-desc">Культовая фиолетовая контрастная гамма.</div>
+                    </div>
+
+                    <div class="theme-card" data-theme="catppuccin">
+                        <div class="theme-card-header">
+                            <span class="theme-card-title">Catppuccin</span>
+                            <div class="theme-preview-dots">
+                                <span class="theme-dot" style="background:#1e1e2e;"></span>
+                                <span class="theme-dot" style="background:#cba6f7;"></span>
+                                <span class="theme-dot" style="background:#89b4fa;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-card-desc" id="theme-catppuccin-desc">Мягкая пастельная палитра для комфортного чтения.</div>
+                    </div>
+
+                    <div class="theme-card" data-theme="nord">
+                        <div class="theme-card-header">
+                            <span class="theme-card-title">Nord</span>
+                            <div class="theme-preview-dots">
+                                <span class="theme-dot" style="background:#2e3440;"></span>
+                                <span class="theme-dot" style="background:#88c0d0;"></span>
+                                <span class="theme-dot" style="background:#81a1c1;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-card-desc" id="theme-nord-desc">Арктическая холодная синяя палитра.</div>
+                    </div>
+                </div>
+
+                <div class="card" style="flex-direction: column; align-items: stretch; gap: 10px;">
+                    <div class="card-info" style="max-width: 100%;">
+                        <div class="card-title" id="title-custom-css">Собственный Custom CSS</div>
+                        <div class="card-desc" id="desc-custom-css">Введите любые CSS правила, они будут применены к интерфейсу клиента.</div>
+                    </div>
+                    <textarea class="css-textarea" id="custom-css-input" placeholder="/* Ваши стили CSS */"></textarea>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn" id="btn-save-css">
+                            <span id="btn-save-css-text">Сохранить стиль</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CHAT & PRIVACY -->
+            <div class="tab-panel" id="tab-chat">
+                <div class="section-header">
+                    <div class="section-title" id="sec-chat-title">Чат и приватность</div>
+                    <div class="section-desc" id="sec-chat-desc">Инструменты для скрытного набора, сохранения удаленных сообщений и перевода.</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Silent Typing</div>
+                        <div class="card-desc" id="desc-silent-typing">Полное скрытие статуса набора текста, никто не видит что вы печатаете.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-silentTyping">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Message Logger</div>
+                        <div class="card-desc" id="desc-message-logger">Сохранение удаленных сообщений прямо в ленте чата с пометкой.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-messageLogger">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Auto Translator</div>
+                        <div class="card-desc" id="desc-auto-translator">Кнопка быстрого перевода любого иностранного сообщения в один клик.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-autoTranslator">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Nitro Cleaner</div>
+                        <div class="card-desc" id="desc-nitro-cleaner">Скрытие рекламы Nitro, вкладки Магазина и кнопок подарков в поле ввода.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-nitroCleaner">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- TAB: MEDIA & AUDIO -->
+            <div class="tab-panel" id="tab-media">
+                <div class="section-header">
+                    <div class="section-title" id="sec-media-title">Звук и медиа</div>
+                    <div class="section-desc" id="sec-media-desc">Усиление звука, интеграция со Spotify и запуск внешних приложений.</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Volume Booster</div>
+                        <div class="card-desc" id="desc-volume-booster">Расширение шкалы громкости пользователей до 400% вместо стандартных 200%.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-volumeBooster">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Spotify Controls</div>
+                        <div class="card-desc" id="desc-spotify-controls">Мини плеер Spotify в панели профиля с кнопками переключения треков.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-spotifyControls">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Spotify Pause Bypass</div>
+                        <div class="card-desc" id="desc-spotify-bypass">Блокировка автопаузы музыки при непрерывной передаче голоса в микрофон.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-spotifyPauseBypass">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Open In App</div>
+                        <div class="card-desc" id="desc-open-in-app">Ссылки YouTube, Spotify и Steam открываются в приложениях на ПК вместо браузера.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-openInApp">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- TAB: UI -->
+            <div class="tab-panel" id="tab-ui">
+                <div class="section-header">
+                    <div class="section-title" id="sec-ui-title">Интерфейс</div>
+                    <div class="section-desc" id="sec-ui-desc">Настройки отображения списка серверов, значков и элементов управления.</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Platform Indicators</div>
+                        <div class="card-desc" id="desc-platform-indicators">Показ значка мобильного телефона рядом с именем друга в сети.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-platformIndicators">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Server Grid</div>
+                        <div class="card-desc" id="desc-server-grid">Отображение списка серверов в 2 компактные колонки.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-serverGrid">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title">Кнопка в углу экрана</div>
+                        <div class="card-desc" id="desc-dock-btn">Плавающая круглая иконка в правом нижнем углу клиента (только в окне Discord).</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-showDockButton">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- TAB: PERFORMANCE -->
+            <div class="tab-panel" id="tab-performance">
+                <div class="section-header">
+                    <div class="section-title" id="sec-perf-title">Оптимизация и сеть</div>
+                    <div class="section-desc" id="sec-perf-desc">Параметры ускорения работы графики и очистки фонового трафика.</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title" id="title-hw-accel">Аппаратное ускорение GPU</div>
+                        <div class="card-desc" id="desc-hw-accel">Использование видеокарты для плавной анимации интерфейса без нагрузки на процессор.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-hardwareAcceleration">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title" id="title-telemetry">Блокировка аналитики и трекеров</div>
+                        <div class="card-desc" id="desc-telemetry">Отключение отправки метрик sentry и datadoghq для уменьшения задержек сети.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="cfg-blockTelemetry">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- TAB: CHROME EXTENSIONS -->
+            <div class="tab-panel" id="tab-chrome">
+                <div class="section-header">
+                    <div class="section-title" id="sec-chrome-title">Расширения Chrome</div>
+                    <div class="section-desc" id="sec-chrome-desc">Подключение любых сторонних распакованных расширений в клиент Discord.</div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <button class="btn secondary" id="btn-open-dir">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                        <span id="btn-open-dir-text">Открыть папку расширений</span>
+                    </button>
+                </div>
+
+                <div id="chrome-extensions-list">
+                    <div class="card">
+                        <div class="card-info">
+                            <div class="card-title" id="empty-chrome-title">Нет установленных расширений</div>
+                            <div class="card-desc" id="empty-chrome-desc">Поместите распакованную папку расширения в каталог extensions/chrome.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: UPDATES -->
+            <div class="tab-panel" id="tab-updates">
+                <div class="section-header">
+                    <div class="section-title" id="sec-updates-title">Центр обновлений</div>
+                    <div class="section-desc" id="sec-updates-desc">Проверка актуальной версии и автоматическая синхронизация с репозиторием.</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-info">
+                        <div class="card-title" id="title-current-ver">Текущая версия</div>
+                        <div class="card-desc">Discord Extensions v1.0.0</div>
+                    </div>
+                    <button class="btn" id="btn-check-update">
+                        <span id="btn-check-update-text">Проверить обновления</span>
+                    </button>
+                </div>
+
+                <div id="update-banner" class="update-box" style="display: none;">
+                    <div>
+                        <h4 id="banner-update-title">Доступна новая версия!</h4>
+                        <p id="banner-update-desc">Нажмите кнопку для автоматической установки свежей сборки.</p>
+                    </div>
+                    <button class="btn" id="btn-apply-update">Обновить сейчас</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-left">
+            <button class="lang-toggle" id="btn-lang-toggle">RU</button>
+            <span style="font-size: 11px; color: #80848E;" id="lbl-hotkey">Горячие клавиши: Ctrl + Shift + E</span>
+        </div>
+        <button class="btn secondary" id="btn-relaunch">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+            <span id="btn-relaunch-text">Перезапустить Discord</span>
+        </button>
+    </div>
+
+    <script>
+        const I18N = {
+            ru: {
+                navCategory: "Управление",
+                navThemes: "Темы оформления",
+                navChat: "Чат и приватность",
+                navMedia: "Звук и медиа",
+                navUi: "Интерфейс",
+                navPerf: "Оптимизация",
+                navChrome: "Расширения",
+                navUpdates: "Обновления",
+
+                secThemesTitle: "Темы оформления",
+                secThemesDesc: "Выберите готовую палитру цветов или примените собственный CSS стиль.",
+                themeDefaultTitle: "По умолчанию",
+                themeDefaultDesc: "Оригинальная темная тема Discord.",
+                themeAmoledDesc: "Глубокий чистый черный цвет для OLED дисплеев.",
+                themeDraculaDesc: "Культовая фиолетовая контрастная гамма.",
+                themeCatppuccinDesc: "Мягкая пастельная палитра для комфортного чтения.",
+                themeNordDesc: "Арктическая холодная синяя палитра.",
+                titleCustomCss: "Собственный Custom CSS",
+                descCustomCss: "Введите любые CSS правила, они будут применены к интерфейсу клиента.",
+                btnSaveCssText: "Сохранить стиль",
+
+                secChatTitle: "Чат и приватность",
+                secChatDesc: "Инструменты для скрытного набора, сохранения удаленных сообщений и перевода.",
+                descSilentTyping: "Полное скрытие статуса набора текста, никто не видит что вы печатаете.",
+                descMessageLogger: "Сохранение удаленных сообщений прямо в ленте чата с пометкой.",
+                descAutoTranslator: "Кнопка быстрого перевода любого иностранного сообщения в один клик.",
+                descNitroCleaner: "Скрытие рекламы Nitro, вкладки Магазина и кнопок подарков в поле ввода.",
+
+                secMediaTitle: "Звук и медиа",
+                secMediaDesc: "Усиление звука, интеграция со Spotify и запуск внешних приложений.",
+                descVolumeBooster: "Расширение шкалы громкости пользователей до 400% вместо стандартных 200%.",
+                descSpotifyControls: "Мини плеер Spotify в панели профиля с кнопками переключения треков.",
+                descSpotifyBypass: "Блокировка автопаузы музыки при непрерывной передаче голоса в микрофон.",
+                descOpenInApp: "Ссылки YouTube, Spotify и Steam открываются в приложениях на ПК вместо браузера.",
+
+                secUiTitle: "Интерфейс",
+                secUiDesc: "Настройки отображения списка серверов, значков и элементов управления.",
+                descPlatformIndicators: "Показ значка мобильного телефона рядом с именем друга в сети.",
+                descServerGrid: "Отображение списка серверов в 2 компактные колонки.",
+                descDockBtn: "Плавающая круглая иконка в правом нижнем углу клиента (только в окне Discord).",
+
+                secPerfTitle: "Оптимизация и сеть",
+                secPerfDesc: "Параметры ускорения работы графики и очистки фонового трафика.",
+                titleHwAccel: "Аппаратное ускорение GPU",
+                descHwAccel: "Использование видеокарты для плавной анимации интерфейса без нагрузки на процессор.",
+                titleTelemetry: "Блокировка аналитики и трекеров",
+                descTelemetry: "Отключение отправки метрик sentry и datadoghq для уменьшения задержек сети.",
+
+                secChromeTitle: "Расширения Chrome",
+                secChromeDesc: "Подключение любых сторонних распакованных расширений в клиент Discord.",
+                btnOpenDir: "Открыть папку расширений",
+                emptyChromeTitle: "Нет установленных расширений",
+                emptyChromeDesc: "Поместите распакованную папку расширения в каталог extensions/chrome.",
+
+                secUpdatesTitle: "Центр обновлений",
+                secUpdatesDesc: "Проверка актуальной версии и автоматическая синхронизация с репозиторием.",
+                titleCurrentVer: "Текущая версия",
+                btnCheckUpdates: "Проверить обновления",
+                btnChecking: "Проверка...",
+                btnRelaunch: "Перезапустить Discord",
+                lblHotkey: "Горячие клавиши: Ctrl + Shift + E",
+                updateFound: "Доступна версия ",
+                updateNotFound: "У вас установлена самая свежая версия"
+            },
+            en: {
+                navCategory: "Management",
+                navThemes: "Themes",
+                navChat: "Chat & Privacy",
+                navMedia: "Sound & Media",
+                navUi: "Interface",
+                navPerf: "Performance",
+                navChrome: "Extensions",
+                navUpdates: "Updates",
+
+                secThemesTitle: "Appearance Themes",
+                secThemesDesc: "Select a prebuilt theme palette or inject your own custom CSS rules.",
+                themeDefaultTitle: "Default",
+                themeDefaultDesc: "Stock dark Discord theme.",
+                themeAmoledDesc: "Deep pure black background optimized for OLED displays.",
+                themeDraculaDesc: "Iconic purple contrast palette.",
+                themeCatppuccinDesc: "Soothing pastel palette for relaxed reading.",
+                themeNordDesc: "Arctic cool blue palette.",
+                titleCustomCss: "Custom CSS Editor",
+                descCustomCss: "Enter custom CSS rules to apply them directly into the Discord client.",
+                btnSaveCssText: "Save & Apply CSS",
+
+                secChatTitle: "Chat and Privacy",
+                secChatDesc: "Tools for silent typing, deleted message logging, and instant translation.",
+                descSilentTyping: "Completely suppress typing indicator so nobody sees you typing.",
+                descMessageLogger: "Keep deleted messages directly in chat timeline with a badge.",
+                descAutoTranslator: "One click translation button for any foreign language messages.",
+                descNitroCleaner: "Hide Nitro promotions, Shop tab, and gift buttons in chat area.",
+
+                secMediaTitle: "Sound and Media",
+                secMediaDesc: "Volume boosting, Spotify integration, and native app link launcher.",
+                descVolumeBooster: "Extend user volume sliders up to 400% instead of standard 200%.",
+                descSpotifyControls: "Mini Spotify player in profile panel with track controls.",
+                descSpotifyBypass: "Prevent Spotify auto pause when transmitting voice over 30s.",
+                descOpenInApp: "Open YouTube, Spotify, and Steam links directly in PC desktop apps.",
+
+                secUiTitle: "Interface Settings",
+                secUiDesc: "Configure server list layout, indicators, and control elements.",
+                descPlatformIndicators: "Show mobile device icon next to online friends in list.",
+                descServerGrid: "Display server list in 2 compact columns.",
+                descDockBtn: "Floating circle icon in the bottom right corner (Discord window only).",
+
+                secPerfTitle: "Performance and Network",
+                secPerfDesc: "Settings for GPU hardware acceleration and background traffic cleanup.",
+                titleHwAccel: "GPU Hardware Acceleration",
+                descHwAccel: "Utilize graphics card for smooth animations without CPU overhead.",
+                titleTelemetry: "Block Analytics and Trackers",
+                descTelemetry: "Block sentry and datadoghq telemetry requests for lower network latency.",
+
+                secChromeTitle: "Chrome Extensions",
+                secChromeDesc: "Load any unpacked third party extensions directly into Discord client.",
+                btnOpenDir: "Open Extensions Folder",
+                emptyChromeTitle: "No Extensions Installed",
+                emptyChromeDesc: "Place unpacked extension folders inside extensions/chrome directory.",
+
+                secUpdatesTitle: "Update Center",
+                secUpdatesDesc: "Check for latest releases and synchronize directly with repository.",
+                titleCurrentVer: "Current Version",
+                btnCheckUpdates: "Check for Updates",
+                btnChecking: "Checking...",
+                btnRelaunch: "Restart Discord",
+                lblHotkey: "Shortcuts: Ctrl + Shift + E",
+                updateFound: "New version available: ",
+                updateNotFound: "You have the latest version installed"
+            }
+        };
+
+        let currentLang = 'ru';
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            const t = I18N[lang];
+            document.getElementById('nav-cat-label').textContent = t.navCategory;
+            document.getElementById('nav-themes').textContent = t.navThemes;
+            document.getElementById('nav-chat').textContent = t.navChat;
+            document.getElementById('nav-media').textContent = t.navMedia;
+            document.getElementById('nav-ui').textContent = t.navUi;
+            document.getElementById('nav-performance').textContent = t.navPerf;
+            document.getElementById('nav-chrome').textContent = t.navChrome;
+            document.getElementById('nav-updates').textContent = t.navUpdates;
+
+            document.getElementById('sec-themes-title').textContent = t.secThemesTitle;
+            document.getElementById('sec-themes-desc').textContent = t.secThemesDesc;
+            document.getElementById('theme-default-title').textContent = t.themeDefaultTitle;
+            document.getElementById('theme-default-desc').textContent = t.themeDefaultDesc;
+            document.getElementById('theme-amoled-desc').textContent = t.themeAmoledDesc;
+            document.getElementById('theme-dracula-desc').textContent = t.themeDraculaDesc;
+            document.getElementById('theme-catppuccin-desc').textContent = t.themeCatppuccinDesc;
+            document.getElementById('theme-nord-desc').textContent = t.themeNordDesc;
+            document.getElementById('title-custom-css').textContent = t.titleCustomCss;
+            document.getElementById('desc-custom-css').textContent = t.descCustomCss;
+            document.getElementById('btn-save-css-text').textContent = t.btnSaveCssText;
+
+            document.getElementById('sec-chat-title').textContent = t.secChatTitle;
+            document.getElementById('sec-chat-desc').textContent = t.secChatDesc;
+            document.getElementById('desc-silent-typing').textContent = t.descSilentTyping;
+            document.getElementById('desc-message-logger').textContent = t.descMessageLogger;
+            document.getElementById('desc-auto-translator').textContent = t.descAutoTranslator;
+            document.getElementById('desc-nitro-cleaner').textContent = t.descNitroCleaner;
+
+            document.getElementById('sec-media-title').textContent = t.secMediaTitle;
+            document.getElementById('sec-media-desc').textContent = t.secMediaDesc;
+            document.getElementById('desc-volume-booster').textContent = t.descVolumeBooster;
+            document.getElementById('desc-spotify-controls').textContent = t.descSpotifyControls;
+            document.getElementById('desc-spotify-bypass').textContent = t.descSpotifyBypass;
+            document.getElementById('desc-open-in-app').textContent = t.descOpenInApp;
+
+            document.getElementById('sec-ui-title').textContent = t.secUiTitle;
+            document.getElementById('sec-ui-desc').textContent = t.secUiDesc;
+            document.getElementById('desc-platform-indicators').textContent = t.descPlatformIndicators;
+            document.getElementById('desc-serverGrid').textContent = t.descServerGrid;
+            document.getElementById('desc-dock-btn').textContent = t.descDockBtn;
+
+            document.getElementById('sec-perf-title').textContent = t.secPerfTitle;
+            document.getElementById('sec-perf-desc').textContent = t.secPerfDesc;
+            document.getElementById('title-hw-accel').textContent = t.titleHwAccel;
+            document.getElementById('desc-hw-accel').textContent = t.descHwAccel;
+            document.getElementById('title-telemetry').textContent = t.titleTelemetry;
+            document.getElementById('desc-telemetry').textContent = t.descTelemetry;
+
+            document.getElementById('sec-chrome-title').textContent = t.secChromeTitle;
+            document.getElementById('sec-chrome-desc').textContent = t.secChromeDesc;
+            document.getElementById('btn-open-dir-text').textContent = t.btnOpenDir;
+            const emptyTitle = document.getElementById('empty-chrome-title');
+            if (emptyTitle) emptyTitle.textContent = t.emptyChromeTitle;
+            const emptyDesc = document.getElementById('empty-chrome-desc');
+            if (emptyDesc) emptyDesc.textContent = t.emptyChromeDesc;
+
+            document.getElementById('sec-updates-title').textContent = t.secUpdatesTitle;
+            document.getElementById('sec-updates-desc').textContent = t.secUpdatesDesc;
+            document.getElementById('title-current-ver').textContent = t.titleCurrentVer;
+            document.getElementById('btn-check-update-text').textContent = t.btnCheckUpdates;
+            document.getElementById('btn-relaunch-text').textContent = t.btnRelaunch;
+            document.getElementById('lbl-hotkey').textContent = t.lblHotkey;
+            document.getElementById('btn-lang-toggle').textContent = lang.toUpperCase();
+        }
+
+        // Navigation Tabs
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                item.classList.add('active');
+                const targetId = item.getAttribute('data-tab');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Window Controls
+        document.getElementById('btn-minimize').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.minimizeWindow();
+        });
+        document.getElementById('btn-close').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.closeWindow();
+        });
+
+        // Language Toggle
+        document.getElementById('btn-lang-toggle').addEventListener('click', () => {
+            applyLanguage(currentLang === 'ru' ? 'en' : 'ru');
+        });
+
+        // Relaunch Discord
+        document.getElementById('btn-relaunch').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.relaunchDiscord();
+        });
+
+        // Open Extensions Directory
+        document.getElementById('btn-open-dir').addEventListener('click', () => {
+            if (window.discordExtensions) window.discordExtensions.openExtensionsDir();
+        });
+
+        // Theme Cards Selection
+        function setupThemes(currentTheme) {
+            document.querySelectorAll('.theme-card').forEach(card => {
+                const themeName = card.getAttribute('data-theme');
+                if (themeName === currentTheme) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+                card.onclick = () => {
+                    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    if (window.discordExtensions) {
+                        window.discordExtensions.saveConfig({ selectedTheme: themeName });
+                    }
+                };
+            });
+        }
+
+        // Custom CSS Save
+        document.getElementById('btn-save-css').addEventListener('click', async () => {
+            if (!window.discordExtensions) return;
+            const css = document.getElementById('custom-css-input').value;
+            await window.discordExtensions.saveCustomCss(css);
+            const btnText = document.getElementById('btn-save-css-text');
+            const original = btnText.textContent;
+            btnText.textContent = 'Готово!';
+            setTimeout(() => { btnText.textContent = original; }, 1500);
+        });
+
+        // Config Binding
+        const configKeys = [
+            'nitroCleaner',
+            'silentTyping',
+            'volumeBooster',
+            'messageLogger',
+            'autoTranslator',
+            'openInApp',
+            'platformIndicators',
+            'serverGrid',
+            'spotifyControls',
+            'spotifyPauseBypass',
+            'showDockButton',
+            'hardwareAcceleration',
+            'blockTelemetry'
+        ];
+
+        async function initConfig() {
+            if (!window.discordExtensions) return;
+
+            const locale = await window.discordExtensions.getLocale();
+            applyLanguage(locale === 'ru' ? 'ru' : 'en');
+
+            const cfg = await window.discordExtensions.getConfig();
+            setupThemes(cfg.selectedTheme || 'none');
+
+            for (const key of configKeys) {
+                const el = document.getElementById('cfg-' + key);
+                if (el) {
+                    el.checked = Boolean(cfg[key]);
+                    el.addEventListener('change', () => {
+                        window.discordExtensions.saveConfig({ [key]: el.checked });
+                    });
+                }
+            }
+
+            const customCss = await window.discordExtensions.getCustomCss();
+            document.getElementById('custom-css-input').value = customCss || '';
+
+            loadChromeExtensions();
+        }
+
+        async function loadChromeExtensions() {
+            if (!window.discordExtensions) return;
+            const exts = await window.discordExtensions.getExtensions();
+            const container = document.getElementById('chrome-extensions-list');
+            if (!exts || exts.length === 0) return;
+
+            container.innerHTML = '';
+            for (const ext of exts) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-info">
+                        <div class="card-title">${ext.name} <span style="font-size:11px;color:#80848E;">v${ext.version}</span></div>
+                        <div class="card-desc">${ext.description || ext.folder}</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" ${ext.enabled ? 'checked' : ''} data-folder="${ext.folder}">
+                        <span class="slider"></span>
+                    </label>
+                `;
+                const cb = card.querySelector('input');
+                cb.addEventListener('change', () => {
+                    window.discordExtensions.toggleExtension(ext.folder, cb.checked);
+                });
+                container.appendChild(card);
+            }
+        }
+
+        // Update Checking
+        document.getElementById('btn-check-update').addEventListener('click', async () => {
+            if (!window.discordExtensions) return;
+            const btnText = document.getElementById('btn-check-update-text');
+            btnText.textContent = I18N[currentLang].btnChecking;
+
+            const res = await window.discordExtensions.checkForUpdates();
+            btnText.textContent = I18N[currentLang].btnCheckUpdates;
+
+            if (res && res.updateAvailable) {
+                document.getElementById('update-banner').style.display = 'flex';
+                document.getElementById('banner-update-title').textContent = I18N[currentLang].updateFound + res.latestVersion;
+            } else {
+                alert(I18N[currentLang].updateNotFound);
+            }
+        });
+
+        document.getElementById('btn-apply-update').addEventListener('click', async () => {
+            if (!window.discordExtensions) return;
+            document.getElementById('btn-apply-update').textContent = '...';
+            await window.discordExtensions.applyUpdate();
+        });
+
+        if (window.discordExtensions) {
+            window.discordExtensions.onUpdateAvailable((info) => {
+                document.getElementById('update-banner').style.display = 'flex';
+                document.getElementById('banner-update-title').textContent = I18N[currentLang].updateFound + info.latestVersion;
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', initConfig);
+    </script>
+</body>
+</html>

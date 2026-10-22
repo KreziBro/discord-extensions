@@ -1,0 +1,36 @@
+/* Discord Extensions Nord Theme */
+:root {
+    --background-primary: #2e3440 !important;
+    --background-secondary: #272c36 !important;
+    --background-secondary-alt: #222630 !important;
+    --background-tertiary: #1e222a !important;
+    --background-floating: #272c36 !important;
+    --channeltextarea-background: #3b4252 !important;
+    --background-accent: #434c5e !important;
+    --brand-experiment: #88c0d0 !important;
+    --header-primary: #eceff4 !important;
+    --header-secondary: #d8dee9 !important;
+    --text-normal: #e5e9f0 !important;
+    --text-muted: #8892b0 !important;
+    --text-link: #88c0d0 !important;
+}
+
+body,
+[class*="appMount"],
+[class*="appAsidePanelWrapper"],
+[class*="chat-"],
+[class*="chatContent-"],
+[class*="messagesWrapper-"],
+[class*="sidebar-"],
+[class*="guilds-"] {
+    background-color: #2e3440 !important;
+}
+
+[class*="panels-"],
+[class*="container-"][class*="fixed-"] {
+    background-color: #272c36 !important;
+}
+
+[class*="channelTextArea-"] {
+    background-color: #3b4252 !important;
+}

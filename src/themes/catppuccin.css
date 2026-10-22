@@ -1,0 +1,36 @@
+/* Discord Extensions Catppuccin Mocha Theme */
+:root {
+    --background-primary: #1e1e2e !important;
+    --background-secondary: #181825 !important;
+    --background-secondary-alt: #11111b !important;
+    --background-tertiary: #11111b !important;
+    --background-floating: #181825 !important;
+    --channeltextarea-background: #313244 !important;
+    --background-accent: #45475a !important;
+    --brand-experiment: #cba6f7 !important;
+    --header-primary: #cdd6f4 !important;
+    --header-secondary: #a6adc8 !important;
+    --text-normal: #cdd6f4 !important;
+    --text-muted: #a6adc8 !important;
+    --text-link: #89b4fa !important;
+}
+
+body,
+[class*="appMount"],
+[class*="appAsidePanelWrapper"],
+[class*="chat-"],
+[class*="chatContent-"],
+[class*="messagesWrapper-"],
+[class*="sidebar-"],
+[class*="guilds-"] {
+    background-color: #1e1e2e !important;
+}
+
+[class*="panels-"],
+[class*="container-"][class*="fixed-"] {
+    background-color: #181825 !important;
+}
+
+[class*="channelTextArea-"] {
+    background-color: #313244 !important;
+}
