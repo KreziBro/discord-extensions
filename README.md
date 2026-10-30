@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://microsoft.com/windows"><img src="https://img.shields.io/badge/Платформа-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Платформа"></a>
   <a href="https://discord.com"><img src="https://img.shields.io/badge/Безопасность-100%25-5865F2?style=for-the-badge&logo=shield&logoColor=white" alt="Безопасность"></a>
-  <a href="version.json"><img src="https://img.shields.io/badge/Версия-1.0.1-5865F2?style=for-the-badge" alt="Версия"></a>
+  <a href="version.json"><img src="https://img.shields.io/badge/Версия-1.0.2-5865F2?style=for-the-badge" alt="Версия"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Лицензия-MIT-gray?style=for-the-badge" alt="Лицензия"></a>
 </p>
 

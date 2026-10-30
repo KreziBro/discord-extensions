@@ -15,7 +15,7 @@ function Write-DiscordBanner {
     Write-Host "  ${C_BLURPLE}██████╗  ██╗███████╗ ██████╗  ██████╗ ██████╗  ██████╗ ${C_RESET}"
     Write-Host "  ${C_BLURPLE}██╔══██╗ ██║██╔════╝██╔════╝ ██╔═══██╗██╔══██╗ ██╔══██╗${C_RESET}"
     Write-Host "  ${C_BLURPLE}██║  ██║ ██║███████╗██║      ██║   ██║██████╔╝ ██║  ██║  ${C_WHITE}UNINSTALLER${C_RESET}"
-    Write-Host "  ${C_BLURPLE}██║  ██║ ██║╚════██║██║      ██║   ██║██╔══██╗ ██║  ██║  ${C_GRAY}v1.0.1${C_RESET}"
+    Write-Host "  ${C_BLURPLE}██║  ██║ ██║╚════██║██║      ██║   ██║██╔══██╗ ██║  ██║  ${C_GRAY}v1.0.2${C_RESET}"
     Write-Host "  ${C_BLURPLE}██████╔╝ ██║███████║╚██████╗ ╚██████╔╝██║  ██║ ██████╔╝${C_RESET}"
     Write-Host "  ${C_BLURPLE}╚═════╝  ╚═╝╚══════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ${C_RESET}"
     Write-Host ""

@@ -17,7 +17,7 @@ let PENDING_VERSION = null;
 function initRunningVersion() {
     if (!RUNNING_VERSION) {
         const info = getLocalVersionInfo();
-        RUNNING_VERSION = info.version || '1.0.1';
+        RUNNING_VERSION = info.version || '1.0.2';
     }
     return RUNNING_VERSION;
 }
@@ -33,7 +33,7 @@ function getLocalVersionInfo() {
         writeLog('Error reading local version.json:', e.message);
     }
     return {
-        version: '1.0.1',
+        version: '1.0.2',
         name: 'Discord Extensions',
         updateUrl: DEFAULT_UPDATE_URL,
         zipUrl: DEFAULT_ZIP_URL
