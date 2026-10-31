@@ -170,6 +170,35 @@ app.whenReady().then(() => {
         writeLog('CSP headers bypass error:', e.message);
     }
 
+    // Load Chrome extensions from extensions/chrome
+    try {
+        const { session } = electron;
+        const chromeDir = path.join(extensionsDir, 'chrome');
+        if (session && session.defaultSession && fs.existsSync(chromeDir)) {
+            const cfg = getConfig();
+            const disabled = Array.isArray(cfg.disabledExtensions) ? cfg.disabledExtensions : [];
+            const folders = fs.readdirSync(chromeDir, { withFileTypes: true })
+                .filter(d => d.isDirectory())
+                .map(d => d.name);
+            for (const folder of folders) {
+                if (disabled.includes(folder)) continue;
+                const extPath = path.join(chromeDir, folder);
+                const manifestPath = path.join(extPath, 'manifest.json');
+                if (fs.existsSync(manifestPath)) {
+                    session.defaultSession.loadExtension(extPath, { allowFileAccess: true })
+                        .then(ext => {
+                            writeLog('Loaded Chrome extension:', ext?.name || folder);
+                        })
+                        .catch(err => {
+                            writeLog('Failed to load Chrome extension ' + folder + ':', err.message);
+                        });
+                }
+            }
+        }
+    } catch (chromeErr) {
+        writeLog('Chrome extensions loader error:', chromeErr.message);
+    }
+
     // Global shortcut Ctrl + Shift + E
     try {
         globalShortcut.register('CommandOrControl+Shift+E', () => {

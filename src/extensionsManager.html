@@ -1780,9 +1780,13 @@
             if (window.discordExtensions) window.discordExtensions.relaunchDiscord();
         });
 
-        // Open Extensions Directory
+        // Open Chrome Extensions Directory
         document.getElementById('btn-open-dir').addEventListener('click', () => {
-            if (window.discordExtensions) window.discordExtensions.openExtensionsDir();
+            if (window.discordExtensions && window.discordExtensions.openChromeDir) {
+                window.discordExtensions.openChromeDir();
+            } else if (window.discordExtensions) {
+                window.discordExtensions.openExtensionsDir();
+            }
         });
 
         // Telegram Developer Channel Button

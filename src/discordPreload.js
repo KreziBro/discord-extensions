@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('discordExtensions', {
     getExtensions: () => ipcRenderer.invoke('get-extensions'),
     toggleExtension: (folder, enable) => ipcRenderer.invoke('toggle-extension', folder, enable),
     openExtensionsDir: () => ipcRenderer.invoke('open-extensions-dir'),
+    openChromeDir: () => ipcRenderer.invoke('open-chrome-dir'),
     minimizeWindow: () => ipcRenderer.send('minimize-manager-window'),
     closeWindow: () => ipcRenderer.send('close-manager-window'),
     checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),

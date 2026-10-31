@@ -161,6 +161,59 @@ function registerIpcHandlers() {
         return true;
     });
 
+    ipcMain.handle('get-extensions', async () => {
+        try {
+            const chromeDir = path.join(extensionsDir, 'chrome');
+            if (!fs.existsSync(chromeDir)) return [];
+            const disabled = Array.isArray(getConfig().disabledExtensions) ? getConfig().disabledExtensions : [];
+            const folders = fs.readdirSync(chromeDir, { withFileTypes: true })
+                .filter(d => d.isDirectory())
+                .map(d => d.name);
+            const list = [];
+            for (const folder of folders) {
+                const manifestPath = path.join(chromeDir, folder, 'manifest.json');
+                if (fs.existsSync(manifestPath)) {
+                    try {
+                        const raw = fs.readFileSync(manifestPath, 'utf8').replace(/^\uFEFF/, '');
+                        const manifest = JSON.parse(raw);
+                        list.push({
+                            folder,
+                            name: manifest.name || folder,
+                            version: manifest.version || '1.0.0',
+                            description: manifest.description || '',
+                            enabled: !disabled.includes(folder)
+                        });
+                    } catch (_) {}
+                }
+            }
+            return list;
+        } catch (_) {
+            return [];
+        }
+    });
+
+    ipcMain.handle('toggle-extension', async (_, folder, enable) => {
+        const currentConfig = getConfig();
+        const disabled = Array.isArray(currentConfig.disabledExtensions) ? [...currentConfig.disabledExtensions] : [];
+        if (enable) {
+            const idx = disabled.indexOf(folder);
+            if (idx !== -1) disabled.splice(idx, 1);
+        } else {
+            if (!disabled.includes(folder)) disabled.push(folder);
+        }
+        saveConfig({ disabledExtensions: disabled });
+        return { success: true };
+    });
+
+    ipcMain.handle('open-chrome-dir', async () => {
+        const chromeDir = path.join(extensionsDir, 'chrome');
+        if (!fs.existsSync(chromeDir)) {
+            try { fs.mkdirSync(chromeDir, { recursive: true }); } catch (_) {}
+        }
+        shell.openPath(chromeDir);
+        return true;
+    });
+
     ipcMain.handle('get-custom-css', async () => {
         try {
             if (fs.existsSync(customCssFile)) {
